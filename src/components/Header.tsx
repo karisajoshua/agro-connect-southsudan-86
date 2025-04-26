@@ -56,7 +56,7 @@ const Header = ({
     path: "/contact"
   }];
   return <header className="sticky top-0 z-50">
-      <div className="bg-white p-4 shadow-sm">
+      <div className="bg-white p-4 shadow-sm px-[16px] py-[16px]">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center mb-4 md:mb-0">
             <Link to="/" className="flex items-center">
