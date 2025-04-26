@@ -8,28 +8,36 @@ interface Category {
 
 const categories: Category[] = [
   {
-    name: "Cereals",
-    subcategories: ["Maize", "Sorghum", "Millet"]
+    name: "Cereals & staples",
+    subcategories: ["Maize", "Sorghum", "Millet", "Rice", "Wheat", "Matooke", "Maize flour", "Cassava flour", "Sorghum flour", "Wheat flour", "Millet flour"]
   },
   {
-    name: "Tubers",
-    subcategories: ["Cassava", "Potatoes", "Sweet Potatoes"]
+    name: "Vegetables",
+    subcategories: ["Onions", "egg plants", "Cabbage", "Tomatoes", "Okra", "Kudra", "Amaranths (dodo)", "Spinach", "Green pepper", "Red pepper", "Carrots", "Broccoli", "Spider plant", "Jiri jiri", "Cassava leaves", "Pumpkin", "Korofo"]
   },
   {
     name: "Legumes",
-    subcategories: ["Beans", "G.nuts", "Soya beans", "Cowpeas", "Cabbages"]
+    subcategories: ["Beans", "Groundnuts", "Cowpeas", "Pulses (Ades)"]
   },
   {
     name: "Fruits",
-    subcategories: ["Avocado", "Watermelon", "Oranges", "Mangoes", "Bananas"]
+    subcategories: ["Watermelon", "Cucumber", "Avocado", "Oranges", "Mangoes", "Limes", "Pineapples", "Bananas", "Paw paws", "Sour sap", "Apples", "Guava", "Sugarcane", "Jackfruit", "Pears", "Lemon", "Tangerine", "Tamarind"]
   },
   {
-    name: "Animals",
-    subcategories: ["Cows", "Goats", "Sheep", "Chickens", "Ducks"]
+    name: "Animals & by-products",
+    subcategories: ["Cattle", "Goats", "Sheep", "Pigs", "Rabbits", "Hides & skins", "Milk", "Donkeys", "Fish", "Honey"]
   },
   {
-    name: "Fish & Aquaculture",
-    subcategories: ["Tilapia", "Catfish", "Fishing Equipment"]
+    name: "Cash & industrial crops",
+    subcategories: ["Coffee", "cotton", "Pyrethrum", "Flowers", "Sisal", "Aloe Vera", "Shea nuts", "Moringa", "Vanilla", "Gum arabic", "Kerekede"]
+  },
+  {
+    name: "Oil crops",
+    subcategories: ["Sesame /simsim", "soya beans", "Sunflower", "Groundnuts"]
+  },
+  {
+    name: "Agro-forestry",
+    subcategories: ["Teak", "Mahogany", "Eucalyptus", "Pine"]
   }
 ];
 

@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,7 +62,7 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Brand custom colors
+				// Brand custom colors - updated
 				'agro-blue': '#104e8b', // Denim blue
 				'agro-green': '#c0d860', // Lemon green
 				'agro-orange': '#e9967a', // Orange for accents
