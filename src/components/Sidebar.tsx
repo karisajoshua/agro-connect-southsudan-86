@@ -1,5 +1,11 @@
-
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface Category {
   name: string;
@@ -42,49 +48,35 @@ const categories: Category[] = [
 ];
 
 const Sidebar = () => {
-  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
-    Cereals: true // Start with Cereals expanded
-  });
-
-  const toggleCategory = (categoryName: string) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [categoryName]: !prev[categoryName]
-    }));
-  };
-
   return (
-    <div className="h-full py-4">
+    <div className="h-full py-4 bg-white">
       <h2 className="text-xl font-bold px-4 mb-4 text-agro-blue">Categories</h2>
       
-      <div className="space-y-1">
-        {categories.map((category) => (
-          <div key={category.name}>
-            <div 
-              className="sidebar-category flex justify-between items-center" 
-              onClick={() => toggleCategory(category.name)}
-            >
-              <span>{category.name}</span>
-              <span className="text-xs">
-                {expandedCategories[category.name] ? '▼' : '▶'}
-              </span>
-            </div>
-            
-            {expandedCategories[category.name] && (
-              <div className="mt-1">
-                {category.subcategories.map((subcategory) => (
-                  <div key={subcategory} className="sidebar-subcategory">
+      <Accordion type="single" collapsible className="w-full">
+        {categories.map((category, index) => (
+          <AccordionItem key={index} value={`item-${index}`}>
+            <AccordionTrigger className="px-4 text-base hover:text-agro-blue">
+              {category.name}
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-1">
+                {category.subcategories.map((subcategory, subIndex) => (
+                  <Link
+                    key={subIndex}
+                    to={`/directory?category=${category.name.toLowerCase()}&subcategory=${subcategory.toLowerCase()}`}
+                    className="block px-6 py-1.5 text-sm hover:bg-agro-green/10 hover:text-agro-blue transition-colors"
+                  >
                     {subcategory}
-                  </div>
+                  </Link>
                 ))}
               </div>
-            )}
-          </div>
+            </AccordionContent>
+          </AccordionItem>
         ))}
-      </div>
+      </Accordion>
       
       <div className="mt-6 px-4">
-        <div className="bg-agro-green bg-opacity-30 p-3 rounded-lg">
+        <div className="bg-agro-green bg-opacity-10 p-3 rounded-lg">
           <h3 className="font-semibold text-agro-blue mb-2">Quick Links</h3>
           <ul className="space-y-1 text-sm">
             <li className="hover:text-agro-blue cursor-pointer">Latest Market Prices</li>

@@ -1,4 +1,3 @@
-
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import CategoryCircle from "@/components/CategoryCircle";
 import AdvertSpace from "@/components/AdvertSpace";
@@ -6,19 +5,77 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const TopCategories = [
-  { name: "Cereals", link: "/directory?category=cereals" },
-  { name: "Legumes", link: "/directory?category=legumes" },
-  { name: "Vegetables", link: "/directory?category=vegetables" },
-  { name: "Fruits", link: "/directory?category=fruits" },
-  { name: "Tubers", link: "/directory?category=tubers" },
+  { 
+    name: "Cereals", 
+    link: "/directory?category=cereals",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/cereals.jpg"
+  },
+  { 
+    name: "Legumes", 
+    link: "/directory?category=legumes",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/legumes.jpg"
+  },
+  { 
+    name: "Vegetables", 
+    link: "/directory?category=vegetables",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/vegetables.jpg"
+  },
+  { 
+    name: "Fruits", 
+    link: "/directory?category=fruits",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/fruits.jpg"
+  },
+  { 
+    name: "Tubers", 
+    link: "/directory?category=tubers",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/tubers.jpg"
+  },
 ];
 
 const BottomCategories = [
-  { name: "Poultry", link: "/directory?category=poultry" },
-  { name: "Livestock", link: "/directory?category=livestock" },
-  { name: "Cash crops", link: "/directory?category=cash-crops" },
-  { name: "Fish & honey", link: "/directory?category=fish-honey" },
-  { name: "Agro-forestry", link: "/directory?category=agroforestry" },
+  { 
+    name: "Poultry", 
+    link: "/directory?category=poultry",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/poultry.jpg"
+  },
+  { 
+    name: "Livestock", 
+    link: "/directory?category=livestock",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/livestock.jpg"
+  },
+  { 
+    name: "Cash crops", 
+    link: "/directory?category=cash-crops",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/cash-crops.jpg"
+  },
+  { 
+    name: "Fish & honey", 
+    link: "/directory?category=fish-honey",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/fish-honey.jpg"
+  },
+  { 
+    name: "Agro-forestry", 
+    link: "/directory?category=agroforestry",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/agroforestry.jpg"
+  },
+];
+
+const sliderImages = [
+  {
+    url: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/slider1.jpg",
+    title: "Connect with Markets",
+    description: "Find buyers for your agricultural products and connect with markets across South Sudan."
+  },
+  {
+    url: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/slider2.jpg",
+    title: "Access Agricultural Services",
+    description: "Access high-quality agricultural services and inputs for improved farming."
+  },
+  {
+    url: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/slider3.jpg",
+    title: "Learn Farming Techniques",
+    description: "Learn modern farming techniques to increase your productivity and income."
+  }
 ];
 
 const HomePage = () => {
@@ -27,24 +84,19 @@ const HomePage = () => {
       {/* Hero Carousel */}
       <Carousel className="w-full">
         <CarouselContent>
-          {[1, 2, 3].map((item) => (
-            <CarouselItem key={item}>
+          {sliderImages.map((slide, index) => (
+            <CarouselItem key={index}>
               <div className="p-1 h-64 sm:h-80">
-                <div className="flex items-center justify-center h-full bg-agro-blue rounded-md relative">
-                  <div className="absolute inset-0 bg-black bg-opacity-30 rounded-md"></div>
+                <div 
+                  className="flex items-center justify-center h-full rounded-md relative bg-cover bg-center"
+                  style={{ backgroundImage: `url(${slide.url})` }}
+                >
+                  <div className="absolute inset-0 bg-black bg-opacity-40 rounded-md"></div>
                   <div className="relative text-center text-white p-6">
-                    <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                      {item === 1 ? "Connect with Markets" : 
-                       item === 2 ? "Access Agricultural Services" : "Learn Farming Techniques"}
-                    </h2>
-                    <p className="text-lg mb-4 max-w-2xl">
-                      {item === 1 ? "Find buyers for your agricultural products and connect with markets across South Sudan." : 
-                       item === 2 ? "Access high-quality agricultural services and inputs for improved farming." : 
-                       "Learn modern farming techniques to increase your productivity and income."}
-                    </p>
+                    <h2 className="text-3xl sm:text-4xl font-bold mb-4">{slide.title}</h2>
+                    <p className="text-lg mb-4 max-w-2xl">{slide.description}</p>
                     <Button className="bg-agro-green text-agro-blue hover:bg-agro-green/90">
-                      {item === 1 ? "Explore Directory" : 
-                       item === 2 ? "Browse Services" : "View Tutorials"}
+                      Learn More
                     </Button>
                   </div>
                 </div>
@@ -59,9 +111,23 @@ const HomePage = () => {
       {/* Upper Categories */}
       <section>
         <h2 className="text-2xl font-bold mb-6 text-agro-blue">Agricultural Products</h2>
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {TopCategories.map((category) => (
-            <CategoryCircle key={category.name} name={category.name} link={category.link} />
+            <Link 
+              key={category.name} 
+              to={category.link}
+              className="relative overflow-hidden rounded-lg group"
+            >
+              <div 
+                className="h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                style={{ backgroundImage: `url(${category.image})` }}
+              >
+                <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-30 transition-opacity"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-white text-xl font-semibold">{category.name}</span>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -72,15 +138,26 @@ const HomePage = () => {
       {/* Bottom Categories */}
       <section>
         <h2 className="text-2xl font-bold mb-6 text-agro-blue">More Categories</h2>
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {BottomCategories.map((category) => (
-            <CategoryCircle key={category.name} name={category.name} link={category.link} />
+            <Link 
+              key={category.name} 
+              to={category.link}
+              className="relative overflow-hidden rounded-lg group"
+            >
+              <div 
+                className="h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                style={{ backgroundImage: `url(${category.image})` }}
+              >
+                <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-30 transition-opacity"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-white text-xl font-semibold">{category.name}</span>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       </section>
-
-      {/* Bottom Advert */}
-      <AdvertSpace className="h-32 sm:h-40" />
 
       {/* Additional Sections */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

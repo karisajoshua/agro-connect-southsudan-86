@@ -7,18 +7,18 @@ import Sidebar from "./Sidebar";
 import LiveChat from "./LiveChat";
 
 const Layout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex flex-col min-h-screen">
       <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
       
-      <div className="flex flex-grow">
+      <div className="flex flex-grow relative">
         {/* Sidebar - visible on larger screens, toggleable on smaller ones */}
         <div 
           className={`${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } transition-transform duration-300 fixed lg:static top-16 bottom-0 left-0 w-64 z-40 bg-agro-orange bg-opacity-70 overflow-y-auto lg:translate-x-0`}
+          } transition-transform duration-300 fixed lg:relative top-0 bottom-0 left-0 w-64 z-40 bg-white shadow-lg overflow-y-auto lg:translate-x-0`}
         >
           <Sidebar />
         </div>
@@ -32,7 +32,7 @@ const Layout = () => {
         )}
         
         {/* Main content */}
-        <main className={`flex-grow p-4 transition-all duration-300 ${sidebarOpen ? "lg:ml-64" : "lg:ml-0"}`}>
+        <main className="flex-grow p-4 w-full overflow-x-hidden">
           <Outlet />
         </main>
       </div>
