@@ -1,41 +1,66 @@
+import CategoryGrid from "@/components/CategoryGrid"; // adjust this import if needed
 
-import { Link } from "react-router-dom";
+const agriculturalProducts = [
+  {
+    name: "Cereals",
+    link: "/cereals",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Cereals.png",
+  },
+  {
+    name: "Legumes",
+    link: "/legumes",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Legumes.png",
+  },
+  {
+    name: "Vegetables",
+    link: "/vegetables",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Vegetables%20%20.png",
+  },
+  {
+    name: "Fruits",
+    link: "/fruits",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Tubers.png",
+  },
+  {
+    name: "Tubers",
+    link: "/tubers",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Tubers.png",
+  },
+];
 
-interface CategoryItem {
-  name: string;
-  link: string;
-  image: string;
-}
+const moreCategories = [
+  {
+    name: "Poultry",
+    link: "/poultry",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Poultry.png",
+  },
+  {
+    name: "Livestock",
+    link: "/livestock",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Livestock.png",
+  },
+  {
+    name: "Cash crops",
+    link: "/cash-crops",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Cash%20Crops.png",
+  },
+  {
+    name: "Fish & honey",
+    link: "/fish-honey",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Fish%20&%20Honey.png",
+  },
+  {
+    name: "Agro-forestry",
+    link: "/agro-forestry",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Agro-forestry.png",
+  },
+];
 
-interface CategoryGridProps {
-  title: string;
-  categories: CategoryItem[];
-}
-
-const CategoryGrid = ({ title, categories }: CategoryGridProps) => {
+export function HomePage() {
   return (
-    <section>
-      <h2 className="text-2xl font-bold mb-6 text-agro-blue">{title}</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {categories.map((category) => (
-          <Link 
-            key={category.name} 
-            to={category.link}
-            className="relative overflow-hidden rounded-lg group h-40"
-          >
-            <div 
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
-              style={{ backgroundImage: `url(${category.image})` }}
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-30 transition-opacity" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-white text-xl font-semibold">{category.name}</span>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </section>
+    <div className="space-y-12">
+      <CategoryGrid title="Agricultural Products" categories={agriculturalProducts} />
+      <CategoryGrid title="More Categories" categories={moreCategories} />
+    </div>
   );
-};
-
-export default CategoryGrid;
+}
