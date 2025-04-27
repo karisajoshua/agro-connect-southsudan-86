@@ -5,6 +5,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Sidebar from "./Sidebar";
 import LiveChat from "./LiveChat";
+import NewsTicker from "./NewsTicker";
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -12,6 +13,7 @@ const Layout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <NewsTicker />
       
       <div className="flex flex-grow relative">
         {/* Sidebar - visible on larger screens, toggleable on smaller ones */}
