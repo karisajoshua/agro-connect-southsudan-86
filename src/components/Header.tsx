@@ -71,7 +71,7 @@ const Header = ({
               <img 
                 src="https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan//ssd%20logo.png" 
                 alt="South Sudan Agro Marketplace Logo" 
-                className="w-12 h-12 mr-3 object-contain" 
+                className="w-40 h-40 mr-3 object-contain" 
               />
               <div className="text-left">
                 <h1 className="text-lg font-bold text-agro-blue"></h1>
