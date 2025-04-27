@@ -1,9 +1,25 @@
-
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import CategoryCircle from "@/components/CategoryCircle";
-import AdvertSpace from "@/components/AdvertSpace";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import AdvertSpace from "@/components/AdvertSpace";
+
+const sliderImages = [
+  {
+    url: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07", 
+    title: "Connect with Markets",
+    description: "Find buyers for your agricultural products and connect with markets across South Sudan."
+  },
+  {
+    url: "https://images.unsplash.com/photo-1472396961693-142e6e269027",
+    title: "Access Agricultural Services",
+    description: "Access high-quality agricultural services and inputs for improved farming."
+  },
+  {
+    url: "https://images.unsplash.com/photo-1493962853295-0fd70327578a",
+    title: "Learn Farming Techniques",
+    description: "Learn modern farming techniques to increase your productivity and income."
+  }
+];
 
 const TopCategories = [
   { 
@@ -61,27 +77,9 @@ const BottomCategories = [
   },
 ];
 
-const sliderImages = [
-  {
-    url: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07", 
-    title: "Connect with Markets",
-    description: "Find buyers for your agricultural products and connect with markets across South Sudan."
-  },
-  {
-    url: "https://images.unsplash.com/photo-1472396961693-142e6e269027",
-    title: "Access Agricultural Services",
-    description: "Access high-quality agricultural services and inputs for improved farming."
-  },
-  {
-    url: "https://images.unsplash.com/photo-1493962853295-0fd70327578a",
-    title: "Learn Farming Techniques",
-    description: "Learn modern farming techniques to increase your productivity and income."
-  }
-];
-
 const HomePage = () => {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-8">
       {/* Hero Carousel */}
       <Carousel className="w-full">
         <CarouselContent>
@@ -117,24 +115,20 @@ const HomePage = () => {
             <Link 
               key={category.name} 
               to={category.link}
-              className="relative overflow-hidden rounded-lg group"
+              className="relative overflow-hidden rounded-lg group h-40"
             >
               <div 
-                className="h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
                 style={{ backgroundImage: `url(${category.image})` }}
-              >
-                <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-30 transition-opacity"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-white text-xl font-semibold">{category.name}</span>
-                </div>
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-30 transition-opacity" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-white text-xl font-semibold">{category.name}</span>
               </div>
             </Link>
           ))}
         </div>
       </section>
-
-      {/* Middle Advert */}
-      <AdvertSpace className="h-32 sm:h-40" />
 
       {/* Bottom Categories */}
       <section>
@@ -144,16 +138,15 @@ const HomePage = () => {
             <Link 
               key={category.name} 
               to={category.link}
-              className="relative overflow-hidden rounded-lg group"
+              className="relative overflow-hidden rounded-lg group h-40"
             >
               <div 
-                className="h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
                 style={{ backgroundImage: `url(${category.image})` }}
-              >
-                <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-30 transition-opacity"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-white text-xl font-semibold">{category.name}</span>
-                </div>
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-30 transition-opacity" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-white text-xl font-semibold">{category.name}</span>
               </div>
             </Link>
           ))}
@@ -209,11 +202,6 @@ const HomePage = () => {
             </Link>
           </div>
         </div>
-      </div>
-
-      {/* Side Advert (visible on larger screens) */}
-      <div className="hidden md:block fixed right-4 top-1/3 w-48">
-        <AdvertSpace text="Advert Space" className="h-64" />
       </div>
     </div>
   );
