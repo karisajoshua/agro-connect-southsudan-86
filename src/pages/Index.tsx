@@ -1,3 +1,4 @@
+
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import CategoryCircle from "@/components/CategoryCircle";
 import AdvertSpace from "@/components/AdvertSpace";
@@ -62,17 +63,17 @@ const BottomCategories = [
 
 const sliderImages = [
   {
-    url: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/slider1.jpg",
+    url: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07", 
     title: "Connect with Markets",
     description: "Find buyers for your agricultural products and connect with markets across South Sudan."
   },
   {
-    url: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/slider2.jpg",
+    url: "https://images.unsplash.com/photo-1472396961693-142e6e269027",
     title: "Access Agricultural Services",
     description: "Access high-quality agricultural services and inputs for improved farming."
   },
   {
-    url: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/slider3.jpg",
+    url: "https://images.unsplash.com/photo-1493962853295-0fd70327578a",
     title: "Learn Farming Techniques",
     description: "Learn modern farming techniques to increase your productivity and income."
   }
@@ -104,8 +105,8 @@ const HomePage = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious className="left-2 lg:-left-12" />
+        <CarouselNext className="right-2 lg:-right-12" />
       </Carousel>
 
       {/* Upper Categories */}

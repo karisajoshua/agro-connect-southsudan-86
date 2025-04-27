@@ -18,7 +18,8 @@ const Layout = () => {
         <div 
           className={`${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } transition-transform duration-300 fixed lg:relative top-0 bottom-0 left-0 w-64 z-40 bg-white shadow-lg overflow-y-auto lg:translate-x-0`}
+          } transition-transform duration-300 fixed lg:relative top-0 bottom-0 left-0 w-64 z-40 bg-white shadow-lg overflow-y-auto lg:translate-x-0 h-full`}
+          style={{ marginTop: "10rem" }} // Add some top margin to avoid overlap with header
         >
           <Sidebar />
         </div>
