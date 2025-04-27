@@ -64,7 +64,7 @@ const Header = ({
   }];
 
   return <header className="sticky top-0 z-50">
-      <div className="bg-white p-2 shadow-sm px-4 py-2">
+      <div className="bg-white p-1 shadow-sm px-4 py-2">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
