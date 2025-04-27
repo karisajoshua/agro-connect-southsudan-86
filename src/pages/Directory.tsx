@@ -106,7 +106,7 @@ const Directory = () => {
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all-categories">All Categories</SelectItem>
                 <SelectItem value="Multiple">Multiple</SelectItem>
                 <SelectItem value="Seeds & Fertilizers">Seeds & Fertilizers</SelectItem>
                 <SelectItem value="Livestock">Livestock</SelectItem>
@@ -120,7 +120,7 @@ const Directory = () => {
                 <SelectValue placeholder="Select location" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Locations</SelectItem>
+                <SelectItem value="all-locations">All Locations</SelectItem>
                 <SelectItem value="Juba">Juba</SelectItem>
                 <SelectItem value="Wau">Wau</SelectItem>
                 <SelectItem value="Malakal">Malakal</SelectItem>

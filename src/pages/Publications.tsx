@@ -71,7 +71,7 @@ const Publications = () => {
               <SelectValue placeholder="Publication type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="all-types">All Types</SelectItem>
               <SelectItem value="report">Report</SelectItem>
               <SelectItem value="guide">Guide</SelectItem>
               <SelectItem value="manual">Manual</SelectItem>
@@ -84,7 +84,7 @@ const Publications = () => {
               <SelectValue placeholder="Publisher" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Publishers</SelectItem>
+              <SelectItem value="all-publishers">All Publishers</SelectItem>
               <SelectItem value="ministry">Ministry of Agriculture</SelectItem>
               <SelectItem value="fao">FAO</SelectItem>
               <SelectItem value="worldbank">World Bank</SelectItem>
@@ -97,7 +97,7 @@ const Publications = () => {
               <SelectValue placeholder="Year" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Years</SelectItem>
+              <SelectItem value="all-years">All Years</SelectItem>
               <SelectItem value="2025">2025</SelectItem>
               <SelectItem value="2024">2024</SelectItem>
               <SelectItem value="2023">2023</SelectItem>
