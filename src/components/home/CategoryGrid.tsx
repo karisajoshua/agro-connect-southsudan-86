@@ -1,4 +1,4 @@
-import CategoryGrid from "@/components/CategoryGrid"; // adjust this import if needed
+import CategoryGrid from "@/components/CategoryGrid"; // Adjust the import path if necessary
 
 const agriculturalProducts = [
   {
@@ -14,12 +14,12 @@ const agriculturalProducts = [
   {
     name: "Vegetables",
     link: "/vegetables",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Vegetables%20%20.png",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Vegetables%20.png",
   },
   {
     name: "Fruits",
     link: "/fruits",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Tubers.png",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Fruits.png", // <- Upload this separately if missing
   },
   {
     name: "Tubers",
@@ -47,7 +47,7 @@ const moreCategories = [
   {
     name: "Fish & honey",
     link: "/fish-honey",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Fish%20&%20Honey.png",
+    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/images/Fish%20%26%20Honey.png",
   },
   {
     name: "Agro-forestry",
@@ -59,7 +59,10 @@ const moreCategories = [
 export function HomePage() {
   return (
     <div className="space-y-12">
+      {/* Agricultural Products */}
       <CategoryGrid title="Agricultural Products" categories={agriculturalProducts} />
+
+      {/* More Categories */}
       <CategoryGrid title="More Categories" categories={moreCategories} />
     </div>
   );
