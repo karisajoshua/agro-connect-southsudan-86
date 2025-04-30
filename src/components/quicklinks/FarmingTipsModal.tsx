@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { HandShake } from "lucide-react";
+import { Handshake } from "lucide-react";
 
 interface FarmingTipsModalProps {
   open: boolean;
@@ -75,7 +75,7 @@ const FarmingTipsModal = ({ open, onClose }: FarmingTipsModalProps) => {
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-agro-blue flex items-center gap-2">
-            <HandShake size={20} /> Farming Tips
+            <Handshake size={20} /> Farming Tips
           </DialogTitle>
           <DialogDescription>
             Practical agricultural advice for South Sudanese farmers to improve productivity
