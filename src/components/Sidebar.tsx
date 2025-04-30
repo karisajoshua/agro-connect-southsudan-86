@@ -7,6 +7,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import MarketPricesModal from "./quicklinks/MarketPricesModal";
+import WeatherForecastModal from "./quicklinks/WeatherForecastModal";
+import FarmingTipsModal from "./quicklinks/FarmingTipsModal";
+import JoinCooperativeModal from "./quicklinks/JoinCooperativeModal";
 
 interface Category {
   name: string;
@@ -49,6 +53,11 @@ const categories: Category[] = [
 ];
 
 const Sidebar = () => {
+  const [marketPricesOpen, setMarketPricesOpen] = useState(false);
+  const [weatherForecastOpen, setWeatherForecastOpen] = useState(false);
+  const [farmingTipsOpen, setFarmingTipsOpen] = useState(false);
+  const [joinCooperativeOpen, setJoinCooperativeOpen] = useState(false);
+
   return (
     <div className="h-full py-4 bg-white">
       <h2 className="text-xl font-bold px-4 mb-4 text-agro-blue">Categories</h2>
@@ -80,13 +89,43 @@ const Sidebar = () => {
         <div className="bg-agro-green bg-opacity-10 p-3 rounded-lg">
           <h3 className="font-semibold text-agro-blue mb-2">Quick Links</h3>
           <ul className="space-y-1 text-sm">
-            <li className="hover:text-agro-blue cursor-pointer">Latest Market Prices</li>
-            <li className="hover:text-agro-blue cursor-pointer">Weather Forecast</li>
-            <li className="hover:text-agro-blue cursor-pointer">Farming Tips</li>
-            <li className="hover:text-agro-blue cursor-pointer">Join Cooperative</li>
+            <li 
+              className="hover:text-agro-blue cursor-pointer flex items-center py-1"
+              onClick={() => setMarketPricesOpen(true)}
+            >
+              <span className="w-2 h-2 bg-agro-blue rounded-full mr-2"></span>
+              Latest Market Prices
+            </li>
+            <li 
+              className="hover:text-agro-blue cursor-pointer flex items-center py-1"
+              onClick={() => setWeatherForecastOpen(true)}
+            >
+              <span className="w-2 h-2 bg-agro-orange rounded-full mr-2"></span>
+              Weather Forecast
+            </li>
+            <li 
+              className="hover:text-agro-blue cursor-pointer flex items-center py-1"
+              onClick={() => setFarmingTipsOpen(true)}
+            >
+              <span className="w-2 h-2 bg-agro-green rounded-full mr-2"></span>
+              Farming Tips
+            </li>
+            <li 
+              className="hover:text-agro-blue cursor-pointer flex items-center py-1"
+              onClick={() => setJoinCooperativeOpen(true)}
+            >
+              <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+              Join Cooperative
+            </li>
           </ul>
         </div>
       </div>
+
+      {/* Quick Links Modal Components */}
+      <MarketPricesModal open={marketPricesOpen} onClose={() => setMarketPricesOpen(false)} />
+      <WeatherForecastModal open={weatherForecastOpen} onClose={() => setWeatherForecastOpen(false)} />
+      <FarmingTipsModal open={farmingTipsOpen} onClose={() => setFarmingTipsOpen(false)} />
+      <JoinCooperativeModal open={joinCooperativeOpen} onClose={() => setJoinCooperativeOpen(false)} />
     </div>
   );
 };
