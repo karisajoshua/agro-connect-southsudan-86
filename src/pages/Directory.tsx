@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import RegisterBusinessModal from "@/components/directory/RegisterBusinessModal";
 
 interface DirectoryItem {
   id: number;
@@ -68,6 +69,7 @@ const Directory = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
+  const [registerBusinessModalOpen, setRegisterBusinessModalOpen] = useState(false);
   
   const filteredItems = directoryItems.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -106,7 +108,7 @@ const Directory = () => {
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-categories">All Categories</SelectItem>
+                <SelectItem value="">All Categories</SelectItem>
                 <SelectItem value="Multiple">Multiple</SelectItem>
                 <SelectItem value="Seeds & Fertilizers">Seeds & Fertilizers</SelectItem>
                 <SelectItem value="Livestock">Livestock</SelectItem>
@@ -120,7 +122,7 @@ const Directory = () => {
                 <SelectValue placeholder="Select location" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-locations">All Locations</SelectItem>
+                <SelectItem value="">All Locations</SelectItem>
                 <SelectItem value="Juba">Juba</SelectItem>
                 <SelectItem value="Wau">Wau</SelectItem>
                 <SelectItem value="Malakal">Malakal</SelectItem>
@@ -158,7 +160,12 @@ const Directory = () => {
           </div>
           
           <div className="mt-8 text-center">
-            <Button variant="outline">Register Your Business</Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setRegisterBusinessModalOpen(true)}
+            >
+              Register Your Business
+            </Button>
           </div>
         </TabsContent>
         
@@ -178,6 +185,11 @@ const Directory = () => {
           <p className="p-4 text-center">Consultants directory content will be displayed here.</p>
         </TabsContent>
       </Tabs>
+      
+      <RegisterBusinessModal 
+        open={registerBusinessModalOpen}
+        onClose={() => setRegisterBusinessModalOpen(false)}
+      />
     </div>
   );
 };
