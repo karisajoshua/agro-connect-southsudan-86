@@ -83,7 +83,7 @@ const Directory = () => {
   });
   
   return (
-    <div>
+    <div className="container mx-auto py-6">
       <h1 className="text-3xl font-bold text-agro-blue mb-6">Directory</h1>
       
       <Tabs defaultValue="all" className="w-full mb-6">
