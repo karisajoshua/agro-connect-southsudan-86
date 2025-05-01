@@ -44,8 +44,15 @@ const AdditionalSections = () => {
       <div className="bg-white p-4 rounded-lg shadow">
         <h3 className="text-lg font-bold bg-red-700 text-white p-2 rounded-t-md">YouTube</h3>
         <div className="p-2">
-          <div className="bg-gray-200 h-32 flex items-center justify-center rounded">
-            <span className="text-gray-500">Featured Video</span>
+          <div className="relative pt-[56.25%] w-full overflow-hidden rounded">
+            <iframe 
+              className="absolute top-0 left-0 w-full h-full"
+              src="https://www.youtube.com/embed/QvUixCE_NvI?autoplay=1&mute=1"
+              title="Agricultural Video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
           </div>
           <Link to="/videos" className="inline-block text-agro-blue hover:underline mt-2">
             View all videos →
