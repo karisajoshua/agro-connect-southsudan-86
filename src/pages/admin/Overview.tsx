@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { ChartBar, Bug, Users, FileText, Bell } from "lucide-react";
+import Database from "@/components/ui/database-icon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
