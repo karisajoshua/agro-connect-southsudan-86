@@ -3,6 +3,7 @@ import HeroCarousel from "@/components/home/HeroCarousel";
 import CategoryGrid from "@/components/home/CategoryGrid";
 import AdditionalSections from "@/components/home/AdditionalSections";
 import AdBanner from "@/components/home/AdBanner";
+import AdvertSpace from "@/components/AdvertSpace";
 import { TopCategories, BottomCategories } from "@/data/categories";
 
 const HomePage = () => {
@@ -12,6 +13,7 @@ const HomePage = () => {
       <CategoryGrid title="Agricultural Products" categories={TopCategories} />
       <AdBanner />
       <CategoryGrid title="More Categories" categories={BottomCategories} />
+      <AdvertSpace text="ADVERTISE YOUR AGRICULTURAL PRODUCTS HERE" className="h-28" />
       <AdditionalSections />
     </div>
   );
