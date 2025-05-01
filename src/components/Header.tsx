@@ -4,6 +4,7 @@ import { ChevronDown, Menu, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import AdminLink from "./AdminLink";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -103,6 +104,9 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
               </Link>
             ))}
           </div>
+
+          {/* Admin Link */}
+          <AdminLink />
 
           {/* Mobile Menu */}
           <div className="lg:hidden">

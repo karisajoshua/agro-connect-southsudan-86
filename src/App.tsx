@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,13 @@ import FAQsPage from "./pages/FAQs";
 import ContactPage from "./pages/ContactUs";
 import NotFoundPage from "./pages/NotFound";
 import DiseaseReportPage from "./pages/DiseaseReport";
+
+// Admin pages
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminOverview from "./pages/admin/Overview";
+import AdminLogin from "./pages/admin/Login";
+import DiseaseReports from "./pages/admin/DiseaseReports";
+import DirectoryManagement from "./pages/admin/DirectoryManagement";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +52,15 @@ const App = () => (
             <Route path="contact" element={<ContactPage />} />
             <Route path="disease-report" element={<DiseaseReportPage />} />
             <Route path="*" element={<NotFoundPage />} />
+          </Route>
+          
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminDashboard />}>
+            <Route index element={<AdminOverview />} />
+            <Route path="disease-reports" element={<DiseaseReports />} />
+            <Route path="directory" element={<DirectoryManagement />} />
+            {/* Other admin routes will be added here as they're implemented */}
           </Route>
         </Routes>
       </BrowserRouter>
