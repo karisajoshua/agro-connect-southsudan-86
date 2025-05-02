@@ -3,8 +3,9 @@ import { useState } from "react";
 import { Bug, Users, FileText, Bell } from "lucide-react";
 import Database from "@/components/ui/database-icon";
 import StatsCard from "@/components/admin/StatsCard";
-import RegistrationChart from "@/components/admin/RegistrationChart";
-import DiseaseReportChart from "@/components/admin/DiseaseReportChart";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DiseaseReportDashboard from "@/components/admin/DiseaseReportDashboard";
+import BusinessRegistrationDashboard from "@/components/admin/BusinessRegistrationDashboard";
 import RecentReportsTable from "@/components/admin/RecentReportsTable";
 
 const AdminOverview = () => {
@@ -12,7 +13,7 @@ const AdminOverview = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Dashboard Overview</h1>
-        <p className="text-sm text-gray-600">Last updated: May 1, 2025</p>
+        <p className="text-sm text-gray-600">Last updated: May 2, 2025</p>
       </div>
 
       {/* Stats cards */}
@@ -54,11 +55,21 @@ const AdminOverview = () => {
         />
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RegistrationChart />
-        <DiseaseReportChart />
-      </div>
+      {/* Tabbed visualizations */}
+      <Tabs defaultValue="disease-reports" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="disease-reports">Disease Reports</TabsTrigger>
+          <TabsTrigger value="registrations">Business Registrations</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="disease-reports" className="space-y-4">
+          <DiseaseReportDashboard />
+        </TabsContent>
+        
+        <TabsContent value="registrations" className="space-y-4">
+          <BusinessRegistrationDashboard />
+        </TabsContent>
+      </Tabs>
 
       {/* Recent Reports Table */}
       <RecentReportsTable />
