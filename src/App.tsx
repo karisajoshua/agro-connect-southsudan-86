@@ -26,6 +26,8 @@ import AdminOverview from "./pages/admin/Overview";
 import AdminLogin from "./pages/admin/Login";
 import DiseaseReports from "./pages/admin/DiseaseReports";
 import DirectoryManagement from "./pages/admin/DirectoryManagement";
+import OutbreakMapPage from "./pages/admin/OutbreakMap";
+import CooperativesPage from "./pages/admin/Cooperatives";
 
 const queryClient = new QueryClient();
 
@@ -59,7 +61,9 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />}>
             <Route index element={<AdminOverview />} />
             <Route path="disease-reports" element={<DiseaseReports />} />
+            <Route path="outbreak-map" element={<OutbreakMapPage />} />
             <Route path="directory" element={<DirectoryManagement />} />
+            <Route path="cooperatives" element={<CooperativesPage />} />
             {/* Other admin routes will be added here as they're implemented */}
           </Route>
         </Routes>
