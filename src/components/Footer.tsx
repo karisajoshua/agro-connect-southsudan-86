@@ -1,29 +1,25 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail, Youtube } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
 const Footer = () => {
   const [email, setEmail] = useState("");
-  const { toast } = useToast();
-  
+  const {
+    toast
+  } = useToast();
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (email) {
       toast({
         title: "Subscription successful!",
-        description: "Thank you for subscribing to our newsletter.",
+        description: "Thank you for subscribing to our newsletter."
       });
       setEmail("");
     }
   };
-  
-  return (
-    <footer className="bg-agro-blue text-white">
+  return <footer className="bg-agro-blue text-white">
       <div className="container mx-auto p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* About */}
@@ -54,13 +50,7 @@ const Footer = () => {
               Subscribe to receive updates on agricultural news, market prices, and opportunities.
             </p>
             <form onSubmit={handleSubscribe} className="flex flex-col space-y-2">
-              <Input
-                type="email"
-                placeholder="Your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/20 border-white/10 focus:border-white placeholder:text-white/50 text-white"
-              />
+              <Input type="email" placeholder="Your email address" value={email} onChange={e => setEmail(e.target.value)} className="bg-white/20 border-white/10 focus:border-white placeholder:text-white/50 text-white" />
               <Button type="submit" className="bg-agro-green text-agro-blue hover:bg-agro-green/90">
                 Subscribe
               </Button>
@@ -73,7 +63,7 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               <li className="flex items-center gap-2">
                 <Mail size={16} />
-                <span>info@ssudan-agromarket.org</span>
+                <span>info@ssdagromarketplace.org</span>
               </li>
               <li className="flex items-center gap-2">
                 <Youtube size={16} />
@@ -99,8 +89,6 @@ const Footer = () => {
           <p className="mt-1">Powered by Texcortech Systems</p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
