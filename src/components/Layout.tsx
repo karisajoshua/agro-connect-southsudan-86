@@ -1,19 +1,38 @@
 
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
-import Header from "./Header";
+import { Outlet, useLocation } from "react-router-dom";
+import TopHeader from "./TopHeader";
+import NavigationBar from "./NavigationBar";
 import Footer from "./Footer";
 import Sidebar from "./Sidebar";
 import LiveChat from "./LiveChat";
 import NewsTicker from "./NewsTicker";
+import HeroCarousel from "./home/HeroCarousel";
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <TopHeader />
       <NewsTicker />
+      
+      {/* Show HeroCarousel and NavigationBar only on homepage */}
+      {isHomePage && (
+        <>
+          <div className="container mx-auto px-4 py-4">
+            <HeroCarousel />
+          </div>
+          <NavigationBar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        </>
+      )}
+      
+      {/* Show NavigationBar for other pages (without carousel) */}
+      {!isHomePage && (
+        <NavigationBar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      )}
       
       <div className="flex flex-grow relative">
         {/* Sidebar - visible on larger screens, toggleable on smaller ones */}
@@ -21,7 +40,7 @@ const Layout = () => {
           className={`${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           } transition-transform duration-300 fixed lg:relative top-0 bottom-0 left-0 w-64 z-40 bg-white shadow-lg overflow-y-auto lg:translate-x-0 h-full`}
-          style={{ marginTop: "10rem" }} // Add some top margin to avoid overlap with header
+          style={{ marginTop: isHomePage ? "14rem" : "10rem" }}
         >
           <Sidebar />
         </div>

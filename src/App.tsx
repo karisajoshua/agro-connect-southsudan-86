@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,7 +19,6 @@ import FAQsPage from "./pages/FAQs";
 import ContactPage from "./pages/ContactUs";
 import NotFoundPage from "./pages/NotFound";
 import DiseaseReportPage from "./pages/DiseaseReport";
-import AdminLink from "./components/AdminLink";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -39,11 +37,6 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        {/* Admin Quick Access - Visible on all pages */}
-        <div className="fixed bottom-4 right-4 z-50">
-          <AdminLink />
-        </div>
-        
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
