@@ -96,6 +96,7 @@ const Footer = () => {
             <p>An initiative of Quantum Consult with support from partners</p>
           </div>
           <p>© {new Date().getFullYear()} South Sudan Agro Marketplace. All rights reserved.</p>
+          <p className="mt-1">Powered by Texcortech Systems</p>
         </div>
       </div>
     </footer>
