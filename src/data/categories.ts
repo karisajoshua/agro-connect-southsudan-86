@@ -21,9 +21,10 @@ export const TopCategories = [
     image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/fruits.jpg"
   },
   { 
-    name: "Tubers", 
-    link: "/directory?category=tubers",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/tubers.jpg"
+    name: "Ad Space", 
+    link: "#",
+    image: "",
+    isAd: true
   },
 ];
 
@@ -49,8 +50,9 @@ export const BottomCategories = [
     image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/fish-honey.jpg"
   },
   { 
-    name: "Agro-forestry", 
-    link: "/directory?category=agroforestry",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/agroforestry.jpg"
+    name: "Ad Space", 
+    link: "#",
+    image: "",
+    isAd: true
   },
 ];

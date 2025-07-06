@@ -11,6 +11,7 @@ import MarketPricesModal from "./quicklinks/MarketPricesModal";
 import WeatherForecastModal from "./quicklinks/WeatherForecastModal";
 import FarmingTipsModal from "./quicklinks/FarmingTipsModal";
 import JoinCooperativeModal from "./quicklinks/JoinCooperativeModal";
+import AdCard from "./AdCard";
 
 interface Category {
   name: string;
@@ -84,6 +85,11 @@ const Sidebar = () => {
           </AccordionItem>
         ))}
       </Accordion>
+      
+      {/* Ad Space between Categories and Quick Links */}
+      <div className="px-4 my-6">
+        <AdCard className="h-32 text-sm" />
+      </div>
       
       <div className="mt-6 px-4">
         <div className="bg-agro-green bg-opacity-10 p-3 rounded-lg">

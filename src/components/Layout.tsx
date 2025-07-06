@@ -19,12 +19,10 @@ const Layout = () => {
       <TopHeader />
       <NewsTicker />
       
-      {/* Show HeroCarousel and NavigationBar only on homepage */}
+      {/* Show HeroCarousel full-width only on homepage */}
       {isHomePage && (
         <>
-          <div className="container mx-auto px-4 py-4">
-            <HeroCarousel />
-          </div>
+          <HeroCarousel />
           <NavigationBar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
         </>
       )}
@@ -40,7 +38,7 @@ const Layout = () => {
           className={`${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           } transition-transform duration-300 fixed lg:relative top-0 bottom-0 left-0 w-64 z-40 bg-white shadow-lg overflow-y-auto lg:translate-x-0 h-full`}
-          style={{ marginTop: isHomePage ? "14rem" : "10rem" }}
+          style={{ marginTop: isHomePage ? "10rem" : "10rem" }}
         >
           <Sidebar />
         </div>
