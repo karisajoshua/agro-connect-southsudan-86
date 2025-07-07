@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import AdCard from "../AdCard";
@@ -22,7 +21,7 @@ const CategoryGrid = ({ title, categories }: CategoryGridProps) => {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {categories.map((category, index) => (
           category.isAd ? (
-            <div key={index} className="col-span-full">
+            <div key={index} className="col-span-full md:col-span-1">
               <AdCard />
             </div>
           ) : (
