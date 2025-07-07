@@ -22,7 +22,9 @@ const CategoryGrid = ({ title, categories }: CategoryGridProps) => {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {categories.map((category, index) => (
           category.isAd ? (
-            <AdCard key={index} />
+            <div key={index} className="col-span-full">
+              <AdCard />
+            </div>
           ) : (
             <Link to={category.link} key={index}>
               <Card className="overflow-hidden transition-transform hover:scale-105">
