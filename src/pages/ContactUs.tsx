@@ -86,9 +86,9 @@ const ContactUs = () => {
           </CardHeader>
           <CardContent>
             <CardDescription className="text-base mb-2">General Inquiries</CardDescription>
-            <p>info@ssudan-agromarket.org</p>
+            <p>info@ssdagromarketplace.org</p>
             <CardDescription className="text-base mt-3 mb-1">Support</CardDescription>
-            <p>support@ssudan-agromarket.org</p>
+            <p>support@ssdagromarketplace.org</p>
           </CardContent>
         </Card>
         
