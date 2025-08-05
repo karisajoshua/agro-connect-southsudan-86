@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -73,8 +72,8 @@ const ContactUs = () => {
           </CardHeader>
           <CardContent>
             <CardDescription className="text-base mb-2">Support Team</CardDescription>
-            <p>+211 92 123 4567</p>
-            <p>+211 91 765 4321</p>
+            <p>+211 922 423 065</p>
+            <p>+211 981 250 350</p>
           </CardContent>
         </Card>
         
