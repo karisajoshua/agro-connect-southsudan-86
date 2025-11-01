@@ -158,12 +158,12 @@ const DiseaseReports = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value === "all" ? undefined : value)}>
           <SelectTrigger>
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Statuses</SelectItem>
+            <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="Pending">Pending</SelectItem>
             <SelectItem value="Under Investigation">Under Investigation</SelectItem>
             <SelectItem value="Confirmed">Confirmed</SelectItem>
@@ -171,12 +171,12 @@ const DiseaseReports = () => {
             <SelectItem value="Resolved">Resolved</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={severityFilter} onValueChange={setSeverityFilter}>
+        <Select value={severityFilter} onValueChange={(value) => setSeverityFilter(value === "all" ? undefined : value)}>
           <SelectTrigger>
             <SelectValue placeholder="Filter by severity" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Severities</SelectItem>
+            <SelectItem value="all">All Severities</SelectItem>
             <SelectItem value="Low">Low</SelectItem>
             <SelectItem value="Medium">Medium</SelectItem>
             <SelectItem value="High">High</SelectItem>
