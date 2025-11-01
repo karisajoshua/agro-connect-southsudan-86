@@ -1,4 +1,3 @@
-
 import React from "react";
 import { 
   Table, 
@@ -9,60 +8,44 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-// Mock data for recent reports
-const recentReports = [
-  {
-    id: 1,
-    name: "John Deng",
-    location: "Juba, Central Equatoria",
-    cropType: "Maize",
-    diseaseType: "Fall Armyworm",
-    date: "2025-04-28",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    name: "Mary Wani",
-    location: "Torit, Eastern Equatoria",
-    cropType: "Sorghum",
-    diseaseType: "Rust",
-    date: "2025-04-27",
-    status: "Reviewed",
-  },
-  {
-    id: 3,
-    name: "Samuel Kiir",
-    location: "Wau, Western Bahr el Ghazal",
-    cropType: "Cassava",
-    diseaseType: "Mosaic Virus",
-    date: "2025-04-26",
-    status: "Escalated",
-  },
-  {
-    id: 4,
-    name: "Grace Akol",
-    location: "Malakal, Upper Nile",
-    cropType: "Rice",
-    diseaseType: "Leaf Blight",
-    date: "2025-04-25",
-    status: "Pending",
-  },
-];
+import { useDiseaseReports } from "@/hooks/useDiseaseReports";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const getStatusClassName = (status: string) => {
-  switch (status) {
-    case "Pending":
+  switch (status.toLowerCase()) {
+    case "reported":
+    case "pending":
       return "bg-yellow-100 text-yellow-800";
-    case "Reviewed":
+    case "investigating":
+    case "under investigation":
+      return "bg-blue-100 text-blue-800";
+    case "confirmed":
+      return "bg-orange-100 text-orange-800";
+    case "resolved":
       return "bg-green-100 text-green-800";
-    case "Escalated":
     default:
-      return "bg-red-100 text-red-800";
+      return "bg-gray-100 text-gray-800";
   }
 };
 
 const RecentReportsTable = () => {
+  const { data: reports, isLoading } = useDiseaseReports();
+
+  const recentReports = (reports || []).slice(0, 5);
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Disease Reports</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-64" />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -81,22 +64,37 @@ const RecentReportsTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {recentReports.map((report) => (
-              <TableRow key={report.id}>
-                <TableCell>{report.name}</TableCell>
-                <TableCell>{report.location}</TableCell>
-                <TableCell>{report.cropType}</TableCell>
-                <TableCell>{report.diseaseType}</TableCell>
-                <TableCell>{report.date}</TableCell>
-                <TableCell>
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${getStatusClassName(report.status)}`}
-                  >
-                    {report.status}
-                  </span>
+            {recentReports.length > 0 ? (
+              recentReports.map((report) => (
+                <TableRow key={report.id}>
+                  <TableCell>{report.reporter_name}</TableCell>
+                  <TableCell>
+                    {(() => {
+                      const loc = report.location as any;
+                      return loc?.address || loc?.state || 'N/A';
+                    })()}
+                  </TableCell>
+                  <TableCell>{report.crop_type}</TableCell>
+                  <TableCell>{report.disease_description}</TableCell>
+                  <TableCell>
+                    {new Date(report.created_at).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${getStatusClassName(report.status)}`}
+                    >
+                      {report.status}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
+                  No recent reports found
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </CardContent>

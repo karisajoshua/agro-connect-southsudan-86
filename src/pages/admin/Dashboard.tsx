@@ -107,6 +107,12 @@ const AdminDashboard = () => {
               to="/admin/cooperatives"
               active={currentPath.includes("/admin/cooperatives")}
             />
+            <SidebarItem
+              icon={<ChartBar size={18} />}
+              title="Market Prices"
+              to="/admin/market-prices"
+              active={currentPath.includes("/admin/market-prices")}
+            />
           </SidebarGroup>
 
           <SidebarGroup title="Disease Monitoring">

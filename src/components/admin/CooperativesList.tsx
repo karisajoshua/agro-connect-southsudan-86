@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Table, 
@@ -19,8 +18,8 @@ import {
   Search, 
   Plus, 
   Filter, 
-  Edit, 
-  Trash2 
+  Building2,
+  Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,110 +31,70 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-
-// Mock data for cooperatives
-const cooperativesData = [
-  {
-    id: 1,
-    name: "Juba Farmers Cooperative",
-    location: "Juba, Central Equatoria",
-    memberCount: 42,
-    primaryActivity: "Crop Farming",
-    establishedDate: "2023-02-15",
-    status: "active",
-    contact: "+211 928 123 456"
-  },
-  {
-    id: 2,
-    name: "Torit Agricultural Association",
-    location: "Torit, Eastern Equatoria",
-    memberCount: 28,
-    primaryActivity: "Mixed Farming",
-    establishedDate: "2022-11-03",
-    status: "active",
-    contact: "+211 927 345 678"
-  },
-  {
-    id: 3,
-    name: "Wau Livestock Group",
-    location: "Wau, Western Bahr el Ghazal",
-    memberCount: 35,
-    primaryActivity: "Livestock",
-    establishedDate: "2023-05-22",
-    status: "pending",
-    contact: "+211 925 567 890"
-  },
-  {
-    id: 4,
-    name: "Yei Coffee Growers",
-    location: "Yei, Central Equatoria",
-    memberCount: 19,
-    primaryActivity: "Coffee Production",
-    establishedDate: "2023-08-10",
-    status: "active",
-    contact: "+211 923 901 234"
-  },
-  {
-    id: 5,
-    name: "Malakal Fishing Cooperative",
-    location: "Malakal, Upper Nile",
-    memberCount: 24,
-    primaryActivity: "Fishing",
-    establishedDate: "2022-10-05",
-    status: "inactive",
-    contact: "+211 924 234 567"
-  },
-];
+import { useCooperatives, useCooperativeStats } from "@/hooks/useCooperatives";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CooperativesList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [locationFilter, setLocationFilter] = useState("all");
-  const [activityFilter, setActivityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
 
+  const { data: cooperatives, isLoading } = useCooperatives();
+  const { data: stats } = useCooperativeStats();
+
   // Filter cooperatives based on search and filters
-  const filteredCooperatives = cooperativesData.filter(coop => {
-    const matchesSearch = coop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         coop.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         coop.primaryActivity.toLowerCase().includes(searchTerm.toLowerCase());
-                         
-    const matchesLocation = locationFilter === "all" || coop.location.includes(locationFilter);
-    const matchesActivity = activityFilter === "all" || coop.primaryActivity === activityFilter;
-    const matchesStatus = statusFilter === "all" || coop.status === statusFilter;
+  const filteredCooperatives = (cooperatives || []).filter(coop => {
+    const businessName = coop.business?.business_name || "";
+    const locationData = coop.business?.location as any;
+    const location = locationData?.address || locationData?.state || "";
+    const products = coop.business?.products_services || "";
     
-    return matchesSearch && matchesLocation && matchesActivity && matchesStatus;
+    const matchesSearch = 
+      businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      products.toLowerCase().includes(searchTerm.toLowerCase());
+                          
+    const matchesLocation = locationFilter === "all" || location.includes(locationFilter);
+    const matchesStatus = statusFilter === "all" || coop.business?.verification_status === statusFilter;
+    
+    return matchesSearch && matchesLocation && matchesStatus;
   });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "active":
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Active</Badge>;
+      case "approved":
+        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Approved</Badge>;
       case "pending":
         return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Pending</Badge>;
-      case "inactive":
-        return <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">Inactive</Badge>;
+      case "rejected":
+        return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Rejected</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-96" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h2 className="text-xl font-semibold">Cooperatives Management</h2>
-        <Button className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Register New Cooperative
-        </Button>
       </div>
 
       {/* Filters and Search */}
       <Card>
         <CardContent className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="col-span-1 md:col-span-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="col-span-1 md:col-span-1">
               <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search cooperatives..."
                   className="pl-8"
@@ -151,10 +110,10 @@ const CooperativesList = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Locations</SelectItem>
+                <SelectItem value="Magwi">Magwi</SelectItem>
                 <SelectItem value="Central Equatoria">Central Equatoria</SelectItem>
                 <SelectItem value="Eastern Equatoria">Eastern Equatoria</SelectItem>
-                <SelectItem value="Western">Western Bahr el Ghazal</SelectItem>
-                <SelectItem value="Upper Nile">Upper Nile</SelectItem>
+                <SelectItem value="Western Equatoria">Western Equatoria</SelectItem>
               </SelectContent>
             </Select>
 
@@ -164,9 +123,9 @@ const CooperativesList = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="approved">Approved</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -187,37 +146,47 @@ const CooperativesList = () => {
                 <TableHead>Cooperative Name</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Members</TableHead>
-                <TableHead>Primary Activity</TableHead>
-                <TableHead>Established</TableHead>
+                <TableHead>Products/Services</TableHead>
+                <TableHead>Contact</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredCooperatives.length > 0 ? (
                 filteredCooperatives.map((coop) => (
                   <TableRow key={coop.id}>
-                    <TableCell className="font-medium">{coop.name}</TableCell>
-                    <TableCell>{coop.location}</TableCell>
-                    <TableCell>{coop.memberCount}</TableCell>
-                    <TableCell>{coop.primaryActivity}</TableCell>
-                    <TableCell>{coop.establishedDate}</TableCell>
-                    <TableCell>{getStatusBadge(coop.status)}</TableCell>
+                    <TableCell className="font-medium">
+                      {coop.business?.business_name || 'N/A'}
+                    </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon" title="Edit">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" title="Delete">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                      {(() => {
+                        const loc = coop.business?.location as any;
+                        return loc?.address || loc?.state || 'N/A';
+                      })()}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        {coop.total_members || 0}
                       </div>
+                    </TableCell>
+                    <TableCell className="max-w-xs truncate">
+                      {coop.business?.products_services || 'N/A'}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1 text-sm">
+                        <Phone className="h-3 w-3" />
+                        {coop.business?.phone || 'N/A'}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {getStatusBadge(coop.business?.verification_status || 'pending')}
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-6 text-gray-500">
+                  <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
                     No cooperatives found matching your filters
                   </TableCell>
                 </TableRow>
@@ -232,12 +201,12 @@ const CooperativesList = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="bg-agro-blue bg-opacity-10 p-3 rounded-full">
-                <Users className="h-6 w-6 text-agro-blue" />
+              <div className="bg-blue-100 p-3 rounded-full">
+                <Building2 className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Total Members</p>
-                <p className="text-2xl font-bold">148</p>
+                <p className="text-sm text-muted-foreground">Total Cooperatives</p>
+                <p className="text-2xl font-bold">{stats?.totalCooperatives || 0}</p>
               </div>
             </div>
           </CardContent>
@@ -247,11 +216,11 @@ const CooperativesList = () => {
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <div className="bg-green-100 p-3 rounded-full">
-                <Filter className="h-6 w-6 text-green-600" />
+                <Users className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Active Cooperatives</p>
-                <p className="text-2xl font-bold">3</p>
+                <p className="text-sm text-muted-foreground">Total Members</p>
+                <p className="text-2xl font-bold">{stats?.totalMembers || 0}</p>
               </div>
             </div>
           </CardContent>
@@ -260,12 +229,14 @@ const CooperativesList = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="bg-yellow-100 p-3 rounded-full">
-                <Filter className="h-6 w-6 text-yellow-600" />
+              <div className="bg-amber-100 p-3 rounded-full">
+                <Filter className="h-6 w-6 text-amber-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Pending Applications</p>
-                <p className="text-2xl font-bold">1</p>
+                <p className="text-sm text-muted-foreground">Approved</p>
+                <p className="text-2xl font-bold">
+                  {(cooperatives || []).filter(c => c.business?.verification_status === 'approved').length}
+                </p>
               </div>
             </div>
           </CardContent>

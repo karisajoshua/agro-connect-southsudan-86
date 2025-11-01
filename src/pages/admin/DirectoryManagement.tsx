@@ -1,7 +1,6 @@
-
 import { useState } from "react";
-import { Database, Search, Filter, Check, X } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Database, Search, Check, X } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,142 +13,112 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-
-// Mock data for business directory
-const businesses = [
-  {
-    id: 1,
-    name: "South Sudan Agro Supplies Ltd",
-    category: "Supplier",
-    subcategory: "Agricultural Inputs",
-    location: "Juba, Central Equatoria",
-    contactPerson: "James Wol",
-    phone: "+211 92 345 6789",
-    email: "info@ssagrosupplies.com",
-    registrationDate: "2025-03-15",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    name: "Unity Farmers Cooperative",
-    category: "Cooperative",
-    subcategory: "Cereals & staples",
-    location: "Bentiu, Unity",
-    contactPerson: "Sarah Nyanath",
-    phone: "+211 91 234 5678",
-    email: "unityfarmers@gmail.com",
-    registrationDate: "2025-03-12",
-    status: "Approved",
-  },
-  {
-    id: 3,
-    name: "Jonglei Fresh Produce",
-    category: "Producer",
-    subcategory: "Vegetables",
-    location: "Bor, Jonglei",
-    contactPerson: "David Atem",
-    phone: "+211 92 765 4321",
-    email: "jongleifresh@gmail.com",
-    registrationDate: "2025-03-10",
-    status: "Approved",
-  },
-  {
-    id: 4,
-    name: "Upper Nile Rice Growers",
-    category: "Producer",
-    subcategory: "Cereals & staples",
-    location: "Malakal, Upper Nile",
-    contactPerson: "Grace Akol",
-    phone: "+211 91 876 5432",
-    email: "unrice@gmail.com",
-    registrationDate: "2025-03-08",
-    status: "Pending",
-  },
-  {
-    id: 5,
-    name: "Western Equatoria Coffee Company",
-    category: "Producer",
-    subcategory: "Cash & industrial crops",
-    location: "Yambio, Western Equatoria",
-    contactPerson: "Peter Marcello",
-    phone: "+211 92 123 4567",
-    email: "wecoffee@gmail.com",
-    registrationDate: "2025-03-05",
-    status: "Rejected",
-  },
-  {
-    id: 6,
-    name: "Lakes Livestock Traders",
-    category: "Trader",
-    subcategory: "Animals & by-products",
-    location: "Rumbek, Lakes",
-    contactPerson: "John Mabor",
-    phone: "+211 91 345 6789",
-    email: "lakeslivestock@gmail.com",
-    registrationDate: "2025-03-01",
-    status: "Approved",
-  },
-];
+import { useBusinesses } from "@/hooks/useBusinesses";
+import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/integrations/supabase/client";
 
 const statusColors = {
-  Pending: "bg-yellow-100 text-yellow-800",
-  Approved: "bg-green-100 text-green-800",
-  Rejected: "bg-red-100 text-red-800",
+  pending: "bg-yellow-100 text-yellow-800",
+  approved: "bg-green-100 text-green-800",
+  rejected: "bg-red-100 text-red-800",
 };
 
 const DirectoryManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string | undefined>();
-  const [statusFilter, setStatusFilter] = useState<string | undefined>();
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
   const { toast } = useToast();
+  const { data: businesses, isLoading, refetch } = useBusinesses();
 
-  const filteredBusinesses = businesses.filter((business) => {
-    // Apply search filter
+  const filteredBusinesses = (businesses || []).filter((business) => {
+    const businessName = business.business_name?.toLowerCase() || "";
+    const locationData = business.location as any;
+    const location = (locationData?.address || locationData?.state || "").toLowerCase();
+    const contact = business.contact_name?.toLowerCase() || "";
+
     const matchesSearch =
       searchTerm === "" ||
-      business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      business.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      business.contactPerson.toLowerCase().includes(searchTerm.toLowerCase());
+      businessName.includes(searchTerm.toLowerCase()) ||
+      location.includes(searchTerm.toLowerCase()) ||
+      contact.includes(searchTerm.toLowerCase());
 
-    // Apply category filter
-    const matchesCategory = !categoryFilter || business.category === categoryFilter;
+    const matchesCategory = 
+      categoryFilter === "all" || 
+      business.business_type?.toLowerCase() === categoryFilter.toLowerCase();
 
-    // Apply status filter
-    const matchesStatus = !statusFilter || business.status === statusFilter;
+    const matchesStatus = 
+      statusFilter === "all" || 
+      business.verification_status === statusFilter;
 
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
-  const handleApprove = (id: number) => {
+  const handleApprove = async (id: string) => {
+    const { error } = await supabase
+      .from("businesses")
+      .update({ verification_status: "approved" })
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to approve business",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "Business Approved",
-      description: `The business registration #${id} has been approved.`,
+      description: "The business registration has been approved.",
     });
-    // In real app, update the status in the database
+    refetch();
   };
 
-  const handleReject = (id: number) => {
+  const handleReject = async (id: string) => {
+    const { error } = await supabase
+      .from("businesses")
+      .update({ verification_status: "rejected" })
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to reject business",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "Business Rejected",
-      description: `The business registration #${id} has been rejected.`,
+      description: "The business registration has been rejected.",
     });
-    // In real app, update the status in the database
+    refetch();
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-96" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Database className="h-6 w-6 text-agro-blue" />
+          <Database className="h-6 w-6 text-blue-600" />
           Business Directory Management
         </h1>
-        <Button>Add New Business</Button>
       </div>
 
       {/* Filters */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
           <Input
             className="pl-10"
             placeholder="Search businesses..."
@@ -162,11 +131,11 @@ const DirectoryManagement = () => {
             <SelectValue placeholder="Filter by category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Categories</SelectItem>
-            <SelectItem value="Supplier">Supplier</SelectItem>
-            <SelectItem value="Producer">Producer</SelectItem>
-            <SelectItem value="Trader">Trader</SelectItem>
-            <SelectItem value="Cooperative">Cooperative</SelectItem>
+            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="cooperative">Cooperative</SelectItem>
+            <SelectItem value="supplier">Supplier</SelectItem>
+            <SelectItem value="producer">Producer</SelectItem>
+            <SelectItem value="trader">Trader</SelectItem>
           </SelectContent>
         </Select>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -174,10 +143,10 @@ const DirectoryManagement = () => {
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Statuses</SelectItem>
-            <SelectItem value="Pending">Pending</SelectItem>
-            <SelectItem value="Approved">Approved</SelectItem>
-            <SelectItem value="Rejected">Rejected</SelectItem>
+            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+            <SelectItem value="rejected">Rejected</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -187,8 +156,8 @@ const DirectoryManagement = () => {
         <Card>
           <CardContent className="p-4 flex justify-between items-center">
             <div>
-              <p className="text-sm font-medium text-gray-500">Total Businesses</p>
-              <p className="text-2xl font-bold">{businesses.length}</p>
+              <p className="text-sm font-medium text-muted-foreground">Total Businesses</p>
+              <p className="text-2xl font-bold">{businesses?.length || 0}</p>
             </div>
             <div className="p-2 bg-gray-100 rounded-full">
               <Database className="h-5 w-5 text-gray-600" />
@@ -198,9 +167,9 @@ const DirectoryManagement = () => {
         <Card>
           <CardContent className="p-4 flex justify-between items-center">
             <div>
-              <p className="text-sm font-medium text-gray-500">Pending Approvals</p>
+              <p className="text-sm font-medium text-muted-foreground">Pending Approvals</p>
               <p className="text-2xl font-bold">
-                {businesses.filter((b) => b.status === "Pending").length}
+                {businesses?.filter((b) => b.verification_status === "pending").length || 0}
               </p>
             </div>
             <div className="p-2 bg-yellow-100 rounded-full">
@@ -211,9 +180,9 @@ const DirectoryManagement = () => {
         <Card>
           <CardContent className="p-4 flex justify-between items-center">
             <div>
-              <p className="text-sm font-medium text-gray-500">Approved</p>
+              <p className="text-sm font-medium text-muted-foreground">Approved</p>
               <p className="text-2xl font-bold">
-                {businesses.filter((b) => b.status === "Approved").length}
+                {businesses?.filter((b) => b.verification_status === "approved").length || 0}
               </p>
             </div>
             <div className="p-2 bg-green-100 rounded-full">
@@ -230,7 +199,7 @@ const DirectoryManagement = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Business Name</TableHead>
-                <TableHead>Category</TableHead>
+                <TableHead>Type</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Contact</TableHead>
                 <TableHead>Date</TableHead>
@@ -239,55 +208,69 @@ const DirectoryManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredBusinesses.map((business) => (
-                <TableRow key={business.id}>
-                  <TableCell className="font-medium">{business.name}</TableCell>
-                  <TableCell>
-                    {business.category}
-                    <div className="text-xs text-gray-500">{business.subcategory}</div>
-                  </TableCell>
-                  <TableCell>{business.location}</TableCell>
-                  <TableCell>
-                    {business.contactPerson}
-                    <div className="text-xs text-gray-500">{business.phone}</div>
-                  </TableCell>
-                  <TableCell>{business.registrationDate}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        statusColors[business.status as keyof typeof statusColors]
-                      }`}
-                    >
-                      {business.status}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Button variant="outline" size="sm">
-                      View
-                    </Button>
-                    {business.status === "Pending" && (
-                      <>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700"
-                          onClick={() => handleApprove(business.id)}
+              {filteredBusinesses.length > 0 ? (
+                filteredBusinesses.map((business) => {
+                  const locationData = business.location as any;
+                  return (
+                    <TableRow key={business.id}>
+                      <TableCell className="font-medium">{business.business_name}</TableCell>
+                      <TableCell>
+                        {business.business_type}
+                        <div className="text-xs text-muted-foreground">
+                          {business.category?.name || 'N/A'}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {locationData?.address || locationData?.state || 'N/A'}
+                      </TableCell>
+                      <TableCell>
+                        {business.contact_name}
+                        <div className="text-xs text-muted-foreground">{business.phone}</div>
+                      </TableCell>
+                      <TableCell>
+                        {new Date(business.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 text-xs rounded-full ${
+                            statusColors[business.verification_status as keyof typeof statusColors] || "bg-gray-100 text-gray-800"
+                          }`}
                         >
-                          <Check className="h-4 w-4 mr-1" /> Approve
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
-                          onClick={() => handleReject(business.id)}
-                        >
-                          <X className="h-4 w-4 mr-1" /> Reject
-                        </Button>
-                      </>
-                    )}
+                          {business.verification_status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right space-x-2">
+                        {business.verification_status === "pending" && (
+                          <>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700"
+                              onClick={() => handleApprove(business.id)}
+                            >
+                              <Check className="h-4 w-4 mr-1" /> Approve
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
+                              onClick={() => handleReject(business.id)}
+                            >
+                              <X className="h-4 w-4 mr-1" /> Reject
+                            </Button>
+                          </>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-6 text-muted-foreground">
+                    No businesses found matching your filters
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </CardContent>
