@@ -1,37 +1,14 @@
-
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import AdvertSpace from "@/components/AdvertSpace";
-
-const newsItems = [
-  {
-    id: 1,
-    title: "South Sudan Launches New Agricultural Policy",
-    date: "2025-04-15",
-    category: "Policy",
-    image: "/placeholder.svg",
-    summary: "The Ministry of Agriculture has unveiled a comprehensive policy aimed at boosting agricultural production and food security in the country."
-  },
-  {
-    id: 2,
-    title: "Record Harvest Expected This Season",
-    date: "2025-04-12",
-    category: "Market",
-    image: "/placeholder.svg",
-    summary: "Favorable weather conditions and improved farming practices are expected to lead to bumper harvests across several states."
-  },
-  {
-    id: 3,
-    title: "International Donors Pledge Support for South Sudan Agriculture",
-    date: "2025-04-10",
-    category: "Funding",
-    image: "/placeholder.svg",
-    summary: "A consortium of international donors has pledged $50 million to support agricultural development initiatives in South Sudan."
-  }
-];
+import { useNews } from "@/hooks/useNews";
 
 const News = () => {
+  const { data: news, isLoading } = useNews();
+  const [categoryFilter, setCategoryFilter] = useState("all");
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-agro-blue mb-6">Agricultural News</h1>
@@ -47,27 +24,31 @@ const News = () => {
         <TabsContent value="all" className="mt-0">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-6">
-              {newsItems.map((item) => (
+              {isLoading ? (
+                [...Array(3)].map((_, i) => <Skeleton key={i} className="h-64" />)
+              ) : news?.map((item) => (
                 <Card key={item.id}>
                   <CardHeader>
-                    <img 
-                      src={item.image} 
-                      alt={item.title} 
-                      className="w-full h-40 object-cover rounded mb-4"
-                    />
+                    {item.featured_image && (
+                      <img 
+                        src={item.featured_image} 
+                        alt={item.title} 
+                        className="w-full h-40 object-cover rounded mb-4"
+                      />
+                    )}
                     <CardTitle>{item.title}</CardTitle>
                     <CardDescription>
-                      {item.date} | {item.category}
+                      {new Date(item.published_at || item.created_at).toLocaleDateString()} | {item.category || 'News'}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p>{item.summary}</p>
+                    <p>{item.excerpt || item.content?.substring(0, 150) + '...'}</p>
                   </CardContent>
                   <CardFooter>
                     <Button variant="outline" className="w-full">Read More</Button>
                   </CardFooter>
                 </Card>
-              ))}
+              )) || []}
             </div>
             
             <div className="space-y-6">

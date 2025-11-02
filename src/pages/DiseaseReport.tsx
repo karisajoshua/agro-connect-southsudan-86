@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,6 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
 const DiseaseReport = () => {
   const [formData, setFormData] = useState({
@@ -20,8 +23,11 @@ const DiseaseReport = () => {
     symptoms: "",
     photos: null as File | null
   });
+  const [loading, setLoading] = useState(false);
   
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -38,28 +44,84 @@ const DiseaseReport = () => {
     }
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation would be implemented here
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to submit a disease report.",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
     
-    toast({
-      title: "Report submitted!",
-      description: "Your disease outbreak report has been submitted successfully. Our team will review it shortly.",
-    });
+    setLoading(true);
     
-    // Reset form
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-      location: "",
-      cropType: "",
-      diseaseType: "",
-      affectedArea: "",
-      symptoms: "",
-      photos: null
-    });
+    try {
+      // Upload photo if provided
+      let photoUrl = null;
+      if (formData.photos) {
+        const fileExt = formData.photos.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('disease-report-photos')
+          .upload(fileName, formData.photos);
+
+        if (uploadError) throw uploadError;
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('disease-report-photos')
+          .getPublicUrl(fileName);
+        
+        photoUrl = publicUrl;
+      }
+
+      // Insert disease report
+      const { error } = await supabase.from("disease_reports").insert({
+        user_id: user.id,
+        reporter_name: formData.name,
+        phone: formData.phone,
+        email: formData.email || null,
+        location: { address: formData.location },
+        crop_type: formData.cropType,
+        disease_description: formData.diseaseType,
+        affected_area: formData.affectedArea,
+        symptoms: formData.symptoms,
+        photo_urls: photoUrl ? [photoUrl] : null,
+        status: 'reported',
+        severity: 'medium'
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Report submitted!",
+        description: "Your disease outbreak report has been submitted successfully. Our team will review it shortly.",
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        location: "",
+        cropType: "",
+        diseaseType: "",
+        affectedArea: "",
+        symptoms: "",
+        photos: null
+      });
+    } catch (error: any) {
+      toast({
+        title: "Submission failed",
+        description: error.message || "An error occurred while submitting your report.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -203,7 +265,8 @@ const DiseaseReport = () => {
               />
             </div>
             
-            <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
+            <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={loading}>
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Submit Report
             </Button>
           </form>

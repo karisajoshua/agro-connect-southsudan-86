@@ -1,10 +1,16 @@
-
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useTrainings } from "@/hooks/useTrainings";
 
-const trainings = [
+const Trainings = () => {
+  const { data: trainings, isLoading } = useTrainings();
+  
+  const upcomingTrainings = trainings?.filter(t => t.status === 'upcoming') || [];
+
+  const oldTrainings = [
   {
     id: 1,
     title: "Advanced Cereal Production",
@@ -47,8 +53,7 @@ const trainings = [
   }
 ];
 
-const Trainings = () => {
-  return (
+return (
     <div>
       <h1 className="text-3xl font-bold text-agro-blue mb-6">Agricultural Trainings</h1>
       
@@ -61,7 +66,9 @@ const Trainings = () => {
         
         <TabsContent value="upcoming" className="mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {trainings.map((training) => (
+            {isLoading ? (
+              [...Array(4)].map((_, i) => <Skeleton key={i} className="h-64" />)
+            ) : upcomingTrainings.map((training) => (
               <Card key={training.id}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
@@ -73,24 +80,23 @@ const Trainings = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <div><strong>Organizer:</strong> {training.organizer}</div>
-                    <div><strong>Date:</strong> {training.date}</div>
-                    <div><strong>Location:</strong> {training.location}</div>
-                    <div><strong>Type:</strong> {training.type}</div>
-                    <div><strong>Capacity:</strong> {training.capacity}</div>
+                    <div><strong>Date:</strong> {training.start_date ? new Date(training.start_date).toLocaleDateString() : 'TBA'}</div>
+                    <div><strong>Location:</strong> {training.location || 'TBA'}</div>
+                    <div><strong>Trainer:</strong> {training.trainer || 'TBA'}</div>
+                    <div><strong>Capacity:</strong> {training.enrolled || 0}/{training.capacity || 0}</div>
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
                   <Button variant="outline">View Details</Button>
                   <Button 
-                    disabled={training.status !== "Open"}
-                    className={training.status === "Open" ? "bg-agro-green text-agro-blue hover:bg-agro-green/90" : ""}
+                    disabled={training.status !== "upcoming"}
+                    className={training.status === "upcoming" ? "bg-agro-green text-agro-blue hover:bg-agro-green/90" : ""}
                   >
                     Register
                   </Button>
                 </CardFooter>
               </Card>
-            ))}
+            )) || []}
           </div>
         </TabsContent>
         

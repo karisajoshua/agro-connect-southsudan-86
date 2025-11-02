@@ -29,6 +29,13 @@ import DirectoryManagement from "./pages/admin/DirectoryManagement";
 import OutbreakMapPage from "./pages/admin/OutbreakMap";
 import CooperativesPage from "./pages/admin/Cooperatives";
 import MarketPricesPage from "./pages/admin/MarketPrices";
+import NewsManagement from "./pages/admin/NewsManagement";
+import PublicationsManagement from "./pages/admin/PublicationsManagement";
+import TrainingsManagement from "./pages/admin/TrainingsManagement";
+import UserEngagement from "./pages/admin/UserEngagement";
+import Analytics from "./pages/admin/Analytics";
+import Settings from "./pages/admin/Settings";
+import Auth from "./pages/Auth";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +61,7 @@ const App = () => (
             <Route path="faqs" element={<FAQsPage />} />
             <Route path="contact" element={<ContactPage />} />
             <Route path="disease-report" element={<DiseaseReportPage />} />
+            <Route path="auth" element={<Auth />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
           
@@ -66,7 +74,12 @@ const App = () => (
             <Route path="directory" element={<DirectoryManagement />} />
             <Route path="cooperatives" element={<CooperativesPage />} />
             <Route path="market-prices" element={<MarketPricesPage />} />
-            {/* Other admin routes will be added here as they're implemented */}
+            <Route path="news" element={<NewsManagement />} />
+            <Route path="publications" element={<PublicationsManagement />} />
+            <Route path="trainings" element={<TrainingsManagement />} />
+            <Route path="engagement" element={<UserEngagement />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
       </BrowserRouter>

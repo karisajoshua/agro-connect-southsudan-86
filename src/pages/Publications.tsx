@@ -1,10 +1,20 @@
-
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { usePublications } from "@/hooks/usePublications";
 
-const publications = [
+const Publications = () => {
+  const { data: publications, isLoading } = usePublications();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredPublications = publications?.filter(pub => 
+    pub.title.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
+
+  const oldPublications = [
   {
     id: 1,
     title: "South Sudan Agricultural Sector Review 2025",
@@ -57,8 +67,7 @@ const publications = [
   }
 ];
 
-const Publications = () => {
-  return (
+return (
     <div>
       <h1 className="text-3xl font-bold text-agro-blue mb-6">Publications & Reports</h1>
       
@@ -108,7 +117,9 @@ const Publications = () => {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {publications.map((pub) => (
+        {isLoading ? (
+          [...Array(4)].map((_, i) => <Skeleton key={i} className="h-48" />)
+        ) : filteredPublications.map((pub) => (
           <Card key={pub.id}>
             <CardHeader>
               <div className="flex justify-between items-start">
@@ -123,17 +134,21 @@ const Publications = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
-                <div><strong>Type:</strong> {pub.type}</div>
-                <div><strong>Pages:</strong> {pub.pages}</div>
+                <div><strong>Category:</strong> {pub.category || 'General'}</div>
+                <div><strong>Author:</strong> {pub.author || 'Unknown'}</div>
                 <p className="mt-2">{pub.summary}</p>
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Button variant="outline">Preview</Button>
-              <Button className="bg-agro-blue hover:bg-blue-800">Download</Button>
+              <Button variant="outline" asChild>
+                <a href={pub.file_url} target="_blank" rel="noopener noreferrer">Preview</a>
+              </Button>
+              <Button className="bg-agro-blue hover:bg-blue-800" asChild>
+                <a href={pub.file_url} download>Download</a>
+              </Button>
             </CardFooter>
           </Card>
-        ))}
+        )) || []}
       </div>
       
       <div className="mt-6 flex justify-center">
