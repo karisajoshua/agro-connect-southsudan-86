@@ -125,10 +125,10 @@ return (
               <div className="flex justify-between items-start">
                 <div>
                   <CardTitle>{pub.title}</CardTitle>
-                  <CardDescription>{pub.publisher}, {pub.year}</CardDescription>
+                  <CardDescription>{pub.author || 'Unknown'}, {pub.published_date ? new Date(pub.published_date).getFullYear() : 'N/A'}</CardDescription>
                 </div>
                 <div className="bg-agro-blue text-white text-xs px-2 py-1 rounded">
-                  {pub.fileType}
+                  {pub.file_type}
                 </div>
               </div>
             </CardHeader>
@@ -136,7 +136,7 @@ return (
               <div className="space-y-2 text-sm">
                 <div><strong>Category:</strong> {pub.category || 'General'}</div>
                 <div><strong>Author:</strong> {pub.author || 'Unknown'}</div>
-                <p className="mt-2">{pub.summary}</p>
+                <p className="mt-2">{pub.description}</p>
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">
