@@ -3,12 +3,20 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import AdvertSpace from "@/components/AdvertSpace";
 import { useNews } from "@/hooks/useNews";
 
 const News = () => {
   const { data: news, isLoading } = useNews();
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [selectedArticle, setSelectedArticle] = useState<any>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleReadMore = (article: any) => {
+    setSelectedArticle(article);
+    setDialogOpen(true);
+  };
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-agro-blue mb-6">Agricultural News</h1>
@@ -45,7 +53,13 @@ const News = () => {
                     <p>{item.excerpt || item.content?.substring(0, 150) + '...'}</p>
                   </CardContent>
                   <CardFooter>
-                    <Button variant="outline" className="w-full">Read More</Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={() => handleReadMore(item)}
+                    >
+                      Read More
+                    </Button>
                   </CardFooter>
                 </Card>
               )) || []}
@@ -95,6 +109,39 @@ const News = () => {
           <p className="p-4 text-center">Funding news content will be displayed here.</p>
         </TabsContent>
       </Tabs>
+
+      {/* Article Detail Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">{selectedArticle?.title}</DialogTitle>
+          </DialogHeader>
+          {selectedArticle && (
+            <div className="space-y-4">
+              {selectedArticle.featured_image && (
+                <img 
+                  src={selectedArticle.featured_image} 
+                  alt={selectedArticle.title} 
+                  className="w-full h-64 object-cover rounded"
+                />
+              )}
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <span>{new Date(selectedArticle.published_at || selectedArticle.created_at).toLocaleDateString()}</span>
+                <span>•</span>
+                <span>{selectedArticle.category || 'News'}</span>
+              </div>
+              {selectedArticle.excerpt && (
+                <p className="text-lg font-medium text-muted-foreground">
+                  {selectedArticle.excerpt}
+                </p>
+              )}
+              <div className="prose prose-sm max-w-none whitespace-pre-wrap">
+                {selectedArticle.content}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
