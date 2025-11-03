@@ -58,33 +58,51 @@ const PublicationsManagement = () => {
   };
 
   const handleSave = async () => {
-    if (selectedPub) {
-      await updatePublication.mutateAsync({
-        id: selectedPub.id,
-        updates: formData
-      });
+    // Validate required fields
+    if (!formData.title || !formData.file_url) {
       toast({
-        title: "Success",
-        description: "Publication updated successfully.",
+        title: "Validation Error",
+        description: "Please fill in title and file URL.",
+        variant: "destructive",
       });
-    } else {
-      await createPublication.mutateAsync(formData);
+      return;
+    }
+
+    try {
+      if (selectedPub) {
+        await updatePublication.mutateAsync({
+          id: selectedPub.id,
+          updates: formData
+        });
+        toast({
+          title: "Success",
+          description: "Publication updated successfully.",
+        });
+      } else {
+        await createPublication.mutateAsync(formData);
+        toast({
+          title: "Success",
+          description: "Publication created successfully.",
+        });
+      }
+      setDialogOpen(false);
+      setSelectedPub(null);
+      setFormData({
+        title: "",
+        description: "",
+        file_url: "",
+        file_type: "PDF",
+        category: "",
+        author: "",
+        published_date: new Date().toISOString().split('T')[0],
+      });
+    } catch (error: any) {
       toast({
-        title: "Success",
-        description: "Publication created successfully.",
+        title: "Error",
+        description: error.message || "Failed to save publication.",
+        variant: "destructive",
       });
     }
-    setDialogOpen(false);
-    setSelectedPub(null);
-    setFormData({
-      title: "",
-      description: "",
-      file_url: "",
-      file_type: "PDF",
-      category: "",
-      author: "",
-      published_date: new Date().toISOString().split('T')[0],
-    });
   };
 
   const filteredPublications = publications?.filter((pub) => {
@@ -179,8 +197,12 @@ const PublicationsManagement = () => {
                   />
                 </div>
               </div>
-              <Button onClick={handleSave} className="w-full">
-                {selectedPub ? "Update" : "Create"} Publication
+              <Button 
+                onClick={handleSave} 
+                className="w-full"
+                disabled={createPublication.isPending || updatePublication.isPending}
+              >
+                {(createPublication.isPending || updatePublication.isPending) ? "Saving..." : selectedPub ? "Update Publication" : "Create Publication"}
               </Button>
             </div>
           </DialogContent>
@@ -264,6 +286,10 @@ const PublicationsManagement = () => {
           )}
         </CardContent>
       </Card>
+
+      <footer className="text-center text-sm text-muted-foreground py-4 border-t">
+        Powered by Texcortech Systems
+      </footer>
     </div>
   );
 };

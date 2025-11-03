@@ -63,35 +63,53 @@ const TrainingsManagement = () => {
   };
 
   const handleSave = async () => {
-    if (selectedTraining) {
-      await updateTraining.mutateAsync({
-        id: selectedTraining.id,
-        updates: formData
-      });
+    // Validate required fields
+    if (!formData.title || !formData.description) {
       toast({
-        title: "Success",
-        description: "Training program updated successfully.",
+        title: "Validation Error",
+        description: "Please fill in title and description.",
+        variant: "destructive",
       });
-    } else {
-      await createTraining.mutateAsync(formData);
+      return;
+    }
+
+    try {
+      if (selectedTraining) {
+        await updateTraining.mutateAsync({
+          id: selectedTraining.id,
+          updates: formData
+        });
+        toast({
+          title: "Success",
+          description: "Training program updated successfully.",
+        });
+      } else {
+        await createTraining.mutateAsync(formData);
+        toast({
+          title: "Success",
+          description: "Training program created successfully.",
+        });
+      }
+      setDialogOpen(false);
+      setSelectedTraining(null);
+      setFormData({
+        title: "",
+        description: "",
+        location: "",
+        start_date: "",
+        end_date: "",
+        capacity: 0,
+        trainer: "",
+        contact_info: "",
+        status: "upcoming",
+      });
+    } catch (error: any) {
       toast({
-        title: "Success",
-        description: "Training program created successfully.",
+        title: "Error",
+        description: error.message || "Failed to save training program.",
+        variant: "destructive",
       });
     }
-    setDialogOpen(false);
-    setSelectedTraining(null);
-    setFormData({
-      title: "",
-      description: "",
-      location: "",
-      start_date: "",
-      end_date: "",
-      capacity: 0,
-      trainer: "",
-      contact_info: "",
-      status: "upcoming",
-    });
   };
 
   const filteredTrainings = trainings?.filter((training) => {
@@ -201,8 +219,12 @@ const TrainingsManagement = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <Button onClick={handleSave} className="w-full">
-                {selectedTraining ? "Update" : "Create"} Training
+              <Button 
+                onClick={handleSave} 
+                className="w-full"
+                disabled={createTraining.isPending || updateTraining.isPending}
+              >
+                {(createTraining.isPending || updateTraining.isPending) ? "Saving..." : selectedTraining ? "Update Training" : "Create Training"}
               </Button>
             </div>
           </DialogContent>
@@ -324,6 +346,10 @@ const TrainingsManagement = () => {
           )}
         </CardContent>
       </Card>
+
+      <footer className="text-center text-sm text-muted-foreground py-4 border-t">
+        Powered by Texcortech Systems
+      </footer>
     </div>
   );
 };

@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export const useDiseaseReports = () => {
   return useQuery({
@@ -15,6 +16,39 @@ export const useDiseaseReports = () => {
 
       if (error) throw error;
       return data;
+    },
+  });
+};
+
+export const useUpdateDiseaseReport = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: any }) => {
+      const { data, error } = await supabase
+        .from("disease_reports")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["disease-reports"] });
+      toast({
+        title: "Success",
+        description: "Disease report updated successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update report.",
+        variant: "destructive",
+      });
     },
   });
 };

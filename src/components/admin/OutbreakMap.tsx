@@ -1,5 +1,5 @@
-
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDiseaseReports } from "@/hooks/useDiseaseReports";
 import { 
   Card, 
   CardContent, 
@@ -16,79 +16,98 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
-// Mock data for disease reports
-const diseaseReports = [
-  { 
-    id: 1, 
-    location: { lat: 4.85, lng: 31.58 }, 
-    locationName: "Juba, Central Equatoria",
-    diseaseType: "Fall Armyworm",
-    severity: "high",
-    date: "2025-04-28",
-    status: "active",
-    reported_by: "John Deng" 
-  },
-  { 
-    id: 2, 
-    location: { lat: 4.41, lng: 32.53 }, 
-    locationName: "Torit, Eastern Equatoria",
-    diseaseType: "Rust",
-    severity: "medium",
-    date: "2025-04-27",
-    status: "investigating",
-    reported_by: "Mary Wani" 
-  },
-  { 
-    id: 3, 
-    location: { lat: 7.70, lng: 28.01 }, 
-    locationName: "Wau, Western Bahr el Ghazal",
-    diseaseType: "Mosaic Virus",
-    severity: "critical",
-    date: "2025-04-26",
-    status: "confirmed",
-    reported_by: "Samuel Kiir" 
-  },
-  { 
-    id: 4, 
-    location: { lat: 9.53, lng: 31.65 }, 
-    locationName: "Malakal, Upper Nile",
-    diseaseType: "Leaf Blight",
-    severity: "low",
-    date: "2025-04-25",
-    status: "resolved",
-    reported_by: "Grace Akol" 
-  },
-  { 
-    id: 5, 
-    location: { lat: 5.45, lng: 31.66 }, 
-    locationName: "Bor, Jonglei",
-    diseaseType: "Locusts",
-    severity: "high",
-    date: "2025-04-24",
-    status: "active",
-    reported_by: "Peter Majok" 
-  },
-  { 
-    id: 6, 
-    location: { lat: 3.56, lng: 30.67 }, 
-    locationName: "Yambio, Western Equatoria",
-    diseaseType: "Aphids",
-    severity: "medium",
-    date: "2025-04-23",
-    status: "investigating",
-    reported_by: "Alice Lemi" 
-  }
-];
+import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 const OutbreakMap = () => {
+  const { data: reports, isLoading } = useDiseaseReports();
+  const queryClient = useQueryClient();
   const [timeRange, setTimeRange] = useState("all");
   const [diseaseType, setDiseaseType] = useState("all");
   const [severity, setSeverity] = useState("all");
   const [status, setStatus] = useState("all");
 
-  // This would be replaced with an actual map implementation
-  // using a library like Mapbox, Leaflet, or Google Maps
+  // Real-time subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('outbreak-map-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'disease_reports' },
+        () => queryClient.invalidateQueries({ queryKey: ['disease-reports'] })
+      )
+      .subscribe();
+    
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
+
+  // Transform and filter data for map display
+  const diseaseReports = reports?.filter(report => {
+    // Apply time range filter
+    const reportDate = new Date(report.created_at);
+    const now = new Date();
+    let matchesTimeRange = true;
+    
+    if (timeRange === "1month") {
+      const oneMonthAgo = new Date(now.setMonth(now.getMonth() - 1));
+      matchesTimeRange = reportDate >= oneMonthAgo;
+    } else if (timeRange === "3months") {
+      const threeMonthsAgo = new Date(now.setMonth(now.getMonth() - 3));
+      matchesTimeRange = reportDate >= threeMonthsAgo;
+    } else if (timeRange === "6months") {
+      const sixMonthsAgo = new Date(now.setMonth(now.getMonth() - 6));
+      matchesTimeRange = reportDate >= sixMonthsAgo;
+    } else if (timeRange === "1year") {
+      const oneYearAgo = new Date(now.setFullYear(now.getFullYear() - 1));
+      matchesTimeRange = reportDate >= oneYearAgo;
+    }
+
+    // Apply other filters
+    const matchesDiseaseType = diseaseType === "all" || 
+      (report.disease_description && report.disease_description.toLowerCase().includes(diseaseType.toLowerCase()));
+    const matchesSeverity = severity === "all" || report.severity === severity;
+    const matchesStatus = status === "all" || report.status === status;
+
+    return matchesTimeRange && matchesDiseaseType && matchesSeverity && matchesStatus;
+  }).map(report => {
+    const loc = report.location as any;
+    return {
+      id: report.id,
+      location: { 
+        lat: loc?.lat || 0, 
+        lng: loc?.lng || 0 
+      },
+      locationName: loc?.address || loc?.state || 'Unknown',
+      diseaseType: report.disease_type?.name || report.disease_description || 'Unknown',
+      severity: report.severity,
+      date: new Date(report.created_at).toLocaleDateString(),
+      status: report.status,
+      reported_by: report.reporter_name,
+    };
+  }) || [];
+
+  // Calculate real statistics
+  const stats = {
+    activeOutbreaks: reports?.filter(r => r.status === 'reported').length || 0,
+    investigating: reports?.filter(r => r.status === 'investigating').length || 0,
+    confirmed: reports?.filter(r => r.status === 'confirmed').length || 0,
+    resolved: reports?.filter(r => r.status === 'resolved').length || 0,
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-24" />
+          ))}
+        </div>
+        <Skeleton className="h-[500px]" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -138,7 +157,6 @@ const OutbreakMap = () => {
             <SelectItem value="low">Low</SelectItem>
             <SelectItem value="medium">Medium</SelectItem>
             <SelectItem value="high">High</SelectItem>
-            <SelectItem value="critical">Critical</SelectItem>
           </SelectContent>
         </Select>
 
@@ -148,7 +166,7 @@ const OutbreakMap = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="reported">Reported</SelectItem>
             <SelectItem value="investigating">Under Investigation</SelectItem>
             <SelectItem value="confirmed">Confirmed</SelectItem>
             <SelectItem value="resolved">Resolved</SelectItem>
@@ -156,7 +174,7 @@ const OutbreakMap = () => {
         </Select>
       </div>
 
-      {/* Map Placeholder - In a real implementation, this would be replaced with an interactive map */}
+      {/* Map Placeholder */}
       <Card className="overflow-hidden">
         <CardHeader className="bg-muted py-3">
           <CardTitle className="text-base">Disease Outbreak Map</CardTitle>
@@ -176,7 +194,6 @@ const OutbreakMap = () => {
             {/* Representing disease outbreaks as position indicators */}
             {diseaseReports.map((report) => {
               // Calculate relative position based on lat/lng
-              // This is a simplified positioning just for visual example
               const left = ((report.location.lng + 15) / 50) * 100;
               const top = ((40 - report.location.lat) / 60) * 100;
               
@@ -185,7 +202,6 @@ const OutbreakMap = () => {
                 low: "bg-blue-500",
                 medium: "bg-yellow-500",
                 high: "bg-orange-500",
-                critical: "bg-red-500",
               };
               
               const color = severityColors[report.severity as keyof typeof severityColors] || "bg-gray-500";
@@ -233,12 +249,6 @@ const OutbreakMap = () => {
                 </div>
                 <span className="text-sm">High Severity</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="p-1 rounded-full bg-red-500">
-                  <MapPin className="h-3 w-3 text-white" />
-                </div>
-                <span className="text-sm">Critical Severity</span>
-              </div>
             </div>
           </CardContent>
         </Card>
@@ -251,19 +261,19 @@ const OutbreakMap = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Total Active Outbreaks</p>
-                <p className="text-2xl font-bold">2</p>
+                <p className="text-2xl font-bold">{stats.activeOutbreaks}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Under Investigation</p>
-                <p className="text-2xl font-bold">2</p>
+                <p className="text-2xl font-bold">{stats.investigating}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Confirmed</p>
-                <p className="text-2xl font-bold">1</p>
+                <p className="text-2xl font-bold">{stats.confirmed}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Resolved</p>
-                <p className="text-2xl font-bold">1</p>
+                <p className="text-2xl font-bold">{stats.resolved}</p>
               </div>
             </div>
           </CardContent>
@@ -276,34 +286,42 @@ const OutbreakMap = () => {
           <CardTitle className="text-base">Recent Outbreak Reports</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {diseaseReports.slice(0, 3).map((report) => (
-              <div key={report.id} className="border-b pb-3 last:border-0">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-medium">{report.diseaseType}</h4>
-                    <p className="text-sm text-gray-500">{report.locationName}</p>
+          {diseaseReports.length === 0 ? (
+            <p className="text-center text-muted-foreground py-4">No outbreak reports found</p>
+          ) : (
+            <div className="space-y-4">
+              {diseaseReports.slice(0, 5).map((report) => (
+                <div key={report.id} className="border-b pb-3 last:border-0">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-medium">{report.diseaseType}</h4>
+                      <p className="text-sm text-gray-500">{report.locationName}</p>
+                    </div>
+                    <Badge 
+                      className={
+                        report.status === 'reported' ? 'bg-orange-100 text-orange-800 hover:bg-orange-100' : 
+                        report.status === 'investigating' ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' :
+                        report.status === 'confirmed' ? 'bg-red-100 text-red-800 hover:bg-red-100' :
+                        'bg-green-100 text-green-800 hover:bg-green-100'
+                      }
+                    >
+                      {report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+                    </Badge>
                   </div>
-                  <Badge 
-                    className={
-                      report.status === 'active' ? 'bg-orange-100 text-orange-800 hover:bg-orange-100' : 
-                      report.status === 'investigating' ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' :
-                      report.status === 'confirmed' ? 'bg-red-100 text-red-800 hover:bg-red-100' :
-                      'bg-green-100 text-green-800 hover:bg-green-100'
-                    }
-                  >
-                    {report.status.charAt(0).toUpperCase() + report.status.slice(1)}
-                  </Badge>
+                  <div className="flex justify-between items-center mt-1 text-xs text-gray-500">
+                    <span>Reported by: {report.reported_by}</span>
+                    <span>{report.date}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center mt-1 text-xs text-gray-500">
-                  <span>Reported by: {report.reported_by}</span>
-                  <span>{report.date}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      <footer className="text-center text-sm text-muted-foreground py-4 border-t">
+        Powered by Texcortech Systems
+      </footer>
     </div>
   );
 };

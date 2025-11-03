@@ -73,32 +73,50 @@ const NewsManagement = () => {
   };
 
   const handleSave = async () => {
-    if (selectedArticle) {
-      await updateNews.mutateAsync({
-        id: selectedArticle.id,
-        updates: formData
-      });
+    // Validate required fields
+    if (!formData.title || !formData.content) {
       toast({
-        title: "Success",
-        description: "Article updated successfully.",
+        title: "Validation Error",
+        description: "Please fill in title and content.",
+        variant: "destructive",
       });
-    } else {
-      await createNews.mutateAsync(formData);
+      return;
+    }
+
+    try {
+      if (selectedArticle) {
+        await updateNews.mutateAsync({
+          id: selectedArticle.id,
+          updates: formData
+        });
+        toast({
+          title: "Success",
+          description: "Article updated successfully.",
+        });
+      } else {
+        await createNews.mutateAsync(formData);
+        toast({
+          title: "Success",
+          description: "Article created successfully.",
+        });
+      }
+      setEditDialogOpen(false);
+      setSelectedArticle(null);
+      setFormData({
+        title: "",
+        content: "",
+        excerpt: "",
+        category: "",
+        featured_image: "",
+        published: false,
+      });
+    } catch (error: any) {
       toast({
-        title: "Success",
-        description: "Article created successfully.",
+        title: "Error",
+        description: error.message || "Failed to save article.",
+        variant: "destructive",
       });
     }
-    setEditDialogOpen(false);
-    setSelectedArticle(null);
-    setFormData({
-      title: "",
-      content: "",
-      excerpt: "",
-      category: "",
-      featured_image: "",
-      published: false,
-    });
   };
 
   const filteredNews = news?.filter((article) => {
@@ -193,8 +211,12 @@ const NewsManagement = () => {
                 />
                 <Label htmlFor="published">Published</Label>
               </div>
-              <Button onClick={handleSave} className="w-full">
-                {selectedArticle ? "Update" : "Create"} Article
+              <Button 
+                onClick={handleSave} 
+                className="w-full"
+                disabled={createNews.isPending || updateNews.isPending}
+              >
+                {(createNews.isPending || updateNews.isPending) ? "Saving..." : selectedArticle ? "Update Article" : "Create Article"}
               </Button>
             </div>
           </DialogContent>
@@ -308,6 +330,10 @@ const NewsManagement = () => {
           )}
         </CardContent>
       </Card>
+
+      <footer className="text-center text-sm text-muted-foreground py-4 border-t">
+        Powered by Texcortech Systems
+      </footer>
     </div>
   );
 };
