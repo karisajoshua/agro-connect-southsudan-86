@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAllNews, useUpdateNews, useDeleteNews } from "@/hooks/useNews";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ const NewsManagement = () => {
   const createNews = useCreateNews();
   const { toast } = useToast();
   
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -34,6 +36,13 @@ const NewsManagement = () => {
     featured_image: "",
     published: false,
   });
+
+  // Get current user on mount
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setCurrentUserId(user?.id || null);
+    });
+  }, []);
 
   const handleTogglePublished = async (id: string, currentStatus: boolean) => {
     await updateNews.mutateAsync({
@@ -83,6 +92,16 @@ const NewsManagement = () => {
       return;
     }
 
+    // Check if user is authenticated
+    if (!currentUserId && !selectedArticle) {
+      toast({
+        title: "Authentication Error",
+        description: "You must be logged in to create articles.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       if (selectedArticle) {
         await updateNews.mutateAsync({
@@ -94,7 +113,12 @@ const NewsManagement = () => {
           description: "Article updated successfully.",
         });
       } else {
-        await createNews.mutateAsync(formData);
+        // Include author_id when creating new article
+        await createNews.mutateAsync({
+          ...formData,
+          author_id: currentUserId,
+          published_at: formData.published ? new Date().toISOString() : null,
+        });
         toast({
           title: "Success",
           description: "Article created successfully.",
