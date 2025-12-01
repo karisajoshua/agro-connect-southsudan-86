@@ -1,6 +1,6 @@
-
 import { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import { ProtectedAdminRoute } from "@/components/ProtectedAdminRoute";
 import {
   LayoutDashboard,
@@ -81,12 +81,12 @@ const SidebarGroup = ({
 
 const AdminDashboard = () => {
   const currentPath = window.location.pathname;
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
 
   const handleSignOut = async () => {
-    const { useAuth } = await import("@/hooks/useAuth");
-    const { signOut } = useAuth();
     await signOut();
-    window.location.href = "/";
+    navigate("/");
   };
 
   return (
