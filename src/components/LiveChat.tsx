@@ -9,6 +9,18 @@ const LiveChat = () => {
   const [message, setMessage] = useState("");
   const { messages, isTyping, sendMessage, getQuickActions } = useAIChat();
 
+  // Format message to strip markdown
+  const formatMessage = (text: string) => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '$1')  // Remove **bold**
+      .replace(/\*(.*?)\*/g, '$1')       // Remove *italic*
+      .replace(/#{1,6}\s/g, '')          // Remove # headers
+      .replace(/```[\s\S]*?```/g, '')    // Remove code blocks
+      .replace(/`(.*?)`/g, '$1')         // Remove `inline code`
+      .replace(/\n-\s/g, '\n• ')         // Convert - bullets to •
+      .replace(/\n\*\s/g, '\n• ');       // Convert * bullets to •
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -54,7 +66,7 @@ const LiveChat = () => {
                       : "bg-white text-gray-800 shadow-sm border"
                   }`}
                 >
-                  {msg.text}
+                  {formatMessage(msg.text)}
                 </div>
                 <div className={`text-xs text-gray-500 mt-1 ${msg.isUser ? "text-right" : "text-left"}`}>
                   {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
