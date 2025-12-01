@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePublications, useCreatePublication, useUpdatePublication, useDeletePublication } from "@/hooks/usePublications";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,15 @@ const PublicationsManagement = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedPub, setSelectedPub] = useState<any>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+    fetchUser();
+  }, []);
   
   const [formData, setFormData] = useState({
     title: "",
@@ -79,7 +89,10 @@ const PublicationsManagement = () => {
           description: "Publication updated successfully.",
         });
       } else {
-        await createPublication.mutateAsync(formData);
+        await createPublication.mutateAsync({
+          ...formData,
+          created_by: currentUserId
+        });
         toast({
           title: "Success",
           description: "Publication created successfully.",
