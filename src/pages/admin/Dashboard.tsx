@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
+import { ProtectedAdminRoute } from "@/components/ProtectedAdminRoute";
 import {
   LayoutDashboard,
   Users,
@@ -80,7 +81,8 @@ const AdminDashboard = () => {
   const currentPath = window.location.pathname;
 
   return (
-    <div className="min-h-screen flex">
+    <ProtectedAdminRoute>
+      <div className="min-h-screen flex">
       {/* Sidebar */}
       <div className="w-64 bg-white border-r shadow-sm overflow-y-auto">
         <div className="p-4">
@@ -187,7 +189,8 @@ const AdminDashboard = () => {
           <Outlet />
         </div>
       </div>
-    </div>
+      </div>
+    </ProtectedAdminRoute>
   );
 };
 
