@@ -65,6 +65,22 @@ YEI (Central Equatoria):
 AVAILABLE COOPERATIVES:
 We have cooperatives in Magwi, Aweil, Yambio, and Yei regions offering various agricultural products and services.
 
+CONVERSATION GUIDELINES:
+1. When users ask about prices without specifying a product, ask: "Which product are you interested in? We have prices for maize, sorghum, groundnuts, beans, simsim, cassava, and rice."
+
+2. When users ask about a specific product without location, ask: "Which location would you like prices for? We have data from Magwi, Aweil, Yambio, and Yei."
+
+3. Once you have both product AND location, provide the specific price from the data above.
+
+4. CRITICAL: Do NOT use markdown formatting in your responses. Use plain text only:
+   - No bold asterisks or underscores
+   - No hashtag headers
+   - No backticks for code
+   - Use simple dashes or numbers for lists
+   - Keep responses conversational and easy to read
+
+5. Be conversational and helpful. Ask one clarifying question at a time.
+
 Keep responses helpful, concise, and focused on agricultural topics. If users need specific assistance beyond general information, guide them to contact the organization directly.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

@@ -15,6 +15,8 @@ import {
   MessageSquare,
   Map,
   ChartBar,
+  Home,
+  LogOut,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -80,15 +82,35 @@ const SidebarGroup = ({
 const AdminDashboard = () => {
   const currentPath = window.location.pathname;
 
+  const handleSignOut = async () => {
+    const { useAuth } = await import("@/hooks/useAuth");
+    const { signOut } = useAuth();
+    await signOut();
+    window.location.href = "/";
+  };
+
   return (
     <ProtectedAdminRoute>
       <div className="min-h-screen flex">
       {/* Sidebar */}
-      <div className="w-64 bg-white border-r shadow-sm overflow-y-auto">
-        <div className="p-4">
-          <h1 className="text-xl font-bold text-agro-blue">Admin Panel</h1>
-        </div>
-        <div className="px-3 py-2 space-y-4">
+      <div className="w-64 bg-white border-r shadow-sm overflow-y-auto flex flex-col">
+        <div className="flex-1">
+          <div className="p-4">
+            <h1 className="text-xl font-bold text-agro-blue">Admin Panel</h1>
+          </div>
+          
+          {/* Back to Home Link */}
+          <div className="px-3 pb-2 border-b">
+            <Link
+              to="/"
+              className="flex items-center gap-2 px-3 py-2 rounded-md text-gray-600 hover:bg-agro-blue/10 hover:text-agro-blue transition-colors"
+            >
+              <Home size={18} />
+              <span>Back to Home</span>
+            </Link>
+          </div>
+
+          <div className="px-3 py-2 space-y-4">
           <SidebarItem
             icon={<LayoutDashboard size={18} />}
             title="Overview"
@@ -180,6 +202,19 @@ const AdminDashboard = () => {
             to="/admin/settings"
             active={currentPath.includes("/admin/settings")}
           />
+        </div>
+        </div>
+
+        {/* Sign Out Button at Bottom */}
+        <div className="p-3 border-t">
+          <Button
+            onClick={handleSignOut}
+            variant="outline"
+            className="w-full justify-start gap-2 text-gray-600 hover:text-red-600 hover:border-red-600"
+          >
+            <LogOut size={18} />
+            <span>Sign Out</span>
+          </Button>
         </div>
       </div>
 
