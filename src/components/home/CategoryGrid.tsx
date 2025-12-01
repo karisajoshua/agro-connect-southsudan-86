@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import AdCard from "../AdCard";
+import SubCategoryModal from "../directory/SubCategoryModal";
 
 export interface CategoryItem {
   name: string;
@@ -15,6 +16,22 @@ interface CategoryGridProps {
 }
 
 const CategoryGrid = ({ title, categories }: CategoryGridProps) => {
+  const [selectedCategory, setSelectedCategory] = useState<{
+    category: string;
+    name: string;
+  } | null>(null);
+
+  const handleCategoryClick = (category: CategoryItem) => {
+    if (category.isAd) return;
+    
+    // Extract category from link (e.g., "/directory?category=cereals" -> "cereals")
+    const categorySlug = category.link.split("category=")[1];
+    setSelectedCategory({
+      category: categorySlug,
+      name: category.name,
+    });
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold text-agro-blue">{title}</h2>
@@ -25,7 +42,11 @@ const CategoryGrid = ({ title, categories }: CategoryGridProps) => {
               <AdCard />
             </div>
           ) : (
-            <Link to={category.link} key={index}>
+            <div
+              key={index}
+              onClick={() => handleCategoryClick(category)}
+              className="cursor-pointer"
+            >
               <Card className="overflow-hidden transition-transform hover:scale-105">
                 <div 
                   className="h-32 bg-cover bg-center" 
@@ -35,10 +56,19 @@ const CategoryGrid = ({ title, categories }: CategoryGridProps) => {
                   <p className="font-medium">{category.name}</p>
                 </CardContent>
               </Card>
-            </Link>
+            </div>
           )
         ))}
       </div>
+
+      {selectedCategory && (
+        <SubCategoryModal
+          open={!!selectedCategory}
+          onClose={() => setSelectedCategory(null)}
+          category={selectedCategory.category}
+          categoryName={selectedCategory.name}
+        />
+      )}
     </div>
   );
 };
