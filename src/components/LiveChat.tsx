@@ -2,24 +2,24 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { useChatProcessor } from "@/hooks/useChatProcessor";
+import { useAIChat } from "@/hooks/useAIChat";
 
 const LiveChat = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const { messages, isTyping, processMessage, getQuickActions } = useChatProcessor();
+  const { messages, isTyping, sendMessage, getQuickActions } = useAIChat();
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!message.trim()) return;
     
-    await processMessage(message);
+    await sendMessage(message);
     setMessage("");
   };
 
   const handleQuickAction = async (action: string) => {
-    await processMessage(action);
+    await sendMessage(action);
   };
 
   return (

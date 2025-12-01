@@ -1,14 +1,17 @@
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTrainings } from "@/hooks/useTrainings";
+import { Calendar, MapPin, Users } from "lucide-react";
 
 const Trainings = () => {
   const { data: trainings, isLoading } = useTrainings();
   
   const upcomingTrainings = trainings?.filter(t => t.status === 'upcoming') || [];
+  const ongoingTrainings = trainings?.filter(t => t.status === 'ongoing') || [];
+  const pastTrainings = trainings?.filter(t => t.status === 'completed') || [];
 
   const oldTrainings = [
   {
@@ -73,7 +76,7 @@ return (
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <CardTitle>{training.title}</CardTitle>
-                    <Badge variant={training.status === "Open" ? "default" : "outline"}>
+                    <Badge variant={training.status === "upcoming" ? "default" : "outline"}>
                       {training.status}
                     </Badge>
                   </div>
@@ -100,12 +103,86 @@ return (
           </div>
         </TabsContent>
         
-        <TabsContent value="ongoing">
-          <p className="p-4 text-center">Ongoing trainings will be displayed here.</p>
+        <TabsContent value="ongoing" className="mt-6">
+          {isLoading ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {[...Array(2)].map((_, i) => <Skeleton key={i} className="h-64" />)}
+            </div>
+          ) : ongoingTrainings.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {ongoingTrainings.map((training) => (
+                <Card key={training.id}>
+                  <CardHeader>
+                    <CardTitle>{training.title}</CardTitle>
+                    <CardDescription>{training.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        <span>{training.start_date} - {training.end_date}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        <span>{training.location}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        <span>{training.enrolled}/{training.capacity} enrolled</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-gray-500 text-center">No ongoing training sessions at the moment.</p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
         
-        <TabsContent value="past">
-          <p className="p-4 text-center">Past trainings will be displayed here.</p>
+        <TabsContent value="past" className="mt-6">
+          {isLoading ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {[...Array(2)].map((_, i) => <Skeleton key={i} className="h-64" />)}
+            </div>
+          ) : pastTrainings.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {pastTrainings.map((training) => (
+                <Card key={training.id}>
+                  <CardHeader>
+                    <CardTitle>{training.title}</CardTitle>
+                    <CardDescription>{training.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        <span>{training.start_date} - {training.end_date}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        <span>{training.location}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        <span>{training.enrolled}/{training.capacity} participants</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-gray-500 text-center">No past training sessions recorded yet.</p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
       

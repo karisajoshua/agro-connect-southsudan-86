@@ -32,7 +32,7 @@ export const knowledgeBase: KnowledgeBase = {
 
   // Market prices
   prices: {
-    text: "🌾 Current Market Prices (per 100kg):\n\n📍 JUBA MARKET:\n• Maize: 18,000 - 22,000 SSP\n• Sorghum: 15,000 - 18,000 SSP\n• Beans: 25,000 - 30,000 SSP\n• Rice: 35,000 - 40,000 SSP\n• Groundnuts: 28,000 - 32,000 SSP\n\n📍 WAU MARKET:\n• Maize: 16,000 - 20,000 SSP\n• Sorghum: 14,000 - 17,000 SSP\n• Beans: 23,000 - 28,000 SSP\n\n📍 MALAKAL MARKET:\n• Maize: 17,000 - 21,000 SSP\n• Sorghum: 15,000 - 18,000 SSP\n• Beans: 24,000 - 29,000 SSP\n\nPrices are updated regularly. For real-time updates, check our market prices section!",
+    text: "🌾 Current Market Prices (per 100kg):\n\n📍 MAGWI (Eastern Equatoria):\n• Maize: 100,000 SSP\n• Sorghum: 100,000 SSP\n• Groundnuts (shelled): 90,000 SSP\n\n📍 AWEIL (Northern Bahr el Ghazal):\n• Maize: 600,000 - 750,000 SSP\n• Sorghum: 630,000 SSP\n• Groundnuts (shelled): 360,000 - 420,000 SSP\n• Beans: 450,000 - 600,000 SSP\n• Simsim: 180,000 - 800,000 SSP\n• Cassava: 200,000 - 300,000 SSP\n\n📍 YAMBIO (Western Equatoria):\n• Cassava: 200,000 SSP\n• Rice: 300,000 SSP\n\n📍 YEI (Central Equatoria):\n• Cassava: 250,000 SSP\n• Groundnuts (shelled): 400,000 SSP\n• Simsim: 700,000 SSP\n\nPrices are updated regularly. For real-time updates, check our market prices section!",
     type: 'direct',
     suggestions: ['Weather forecast', 'How to sell products', 'Transportation services']
   },
