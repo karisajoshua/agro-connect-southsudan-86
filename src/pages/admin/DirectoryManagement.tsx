@@ -28,7 +28,7 @@ const DirectoryManagement = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const { toast } = useToast();
-  const { data: businesses, isLoading, refetch } = useBusinesses();
+  const { data: businesses, isLoading, refetch } = useBusinesses(false);
 
   const filteredBusinesses = (businesses || []).filter((business) => {
     const businessName = business.business_name?.toLowerCase() || "";
