@@ -16,6 +16,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Building, Upload } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -51,7 +53,10 @@ type FormValues = z.infer<typeof formSchema>;
 
 const RegisterBusinessModal = ({ open, onClose }: RegisterBusinessModalProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [documentUploaded, setDocumentUploaded] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -77,6 +82,7 @@ const RegisterBusinessModal = ({ open, onClose }: RegisterBusinessModalProps) =>
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
+      setUploadedFile(e.target.files[0]);
       setDocumentUploaded(true);
       toast({
         title: "Document uploaded",
@@ -85,8 +91,8 @@ const RegisterBusinessModal = ({ open, onClose }: RegisterBusinessModalProps) =>
     }
   };
 
-  const onSubmit = (data: FormValues) => {
-    if (!documentUploaded) {
+  const onSubmit = async (data: FormValues) => {
+    if (!documentUploaded || !uploadedFile) {
       toast({
         title: "Missing document",
         description: "Please upload your registration documents.",
@@ -95,16 +101,73 @@ const RegisterBusinessModal = ({ open, onClose }: RegisterBusinessModalProps) =>
       return;
     }
 
-    console.log("Form submitted:", data);
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to register your business.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
     
-    toast({
-      title: "Business Registration Submitted!",
-      description: "Your business has been registered successfully. It will appear in the directory after review.",
-    });
-    
-    form.reset();
-    setDocumentUploaded(false);
-    onClose();
+    try {
+      // Upload document to storage
+      const fileExt = uploadedFile.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('business-documents')
+        .upload(filePath, uploadedFile);
+
+      if (uploadError) throw uploadError;
+
+      // Insert business data
+      const { error: insertError } = await supabase
+        .from('businesses')
+        .insert({
+          user_id: user.id,
+          business_name: data.businessName,
+          business_type: data.businessType,
+          contact_name: data.contactName,
+          phone: data.phone,
+          email: data.email || null,
+          location: {
+            boma: data.location.boma,
+            payam: data.location.payam,
+            county: data.location.county,
+            state: data.location.state,
+            address: data.location.county // Using county as address for display
+          },
+          products_services: data.cropsSpecialized,
+          description: data.businessDescription,
+          documents_url: [filePath],
+          verification_status: 'pending'
+        });
+
+      if (insertError) throw insertError;
+
+      toast({
+        title: "Business Registration Submitted!",
+        description: "Your business has been registered and is pending admin approval.",
+      });
+      
+      form.reset();
+      setDocumentUploaded(false);
+      setUploadedFile(null);
+      onClose();
+    } catch (error: any) {
+      console.error('Error submitting business:', error);
+      toast({
+        title: "Registration failed",
+        description: error.message || "Failed to register your business. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -400,9 +463,11 @@ const RegisterBusinessModal = ({ open, onClose }: RegisterBusinessModalProps) =>
             />
             
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-              <Button type="submit" className="bg-agro-blue hover:bg-blue-800">
-                Register Business
+              <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+                Cancel
+              </Button>
+              <Button type="submit" className="bg-agro-blue hover:bg-blue-800" disabled={isSubmitting}>
+                {isSubmitting ? "Submitting..." : "Register Business"}
               </Button>
             </DialogFooter>
           </form>
