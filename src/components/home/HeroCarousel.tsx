@@ -2,20 +2,23 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import heroConnectMarkets from "@/assets/hero-connect-markets.jpg";
+import heroAgriculturalServices from "@/assets/hero-agricultural-services.jpg";
+import heroFarmingTechniques from "@/assets/hero-farming-techniques.jpg";
 
 const sliderImages = [
   {
-    url: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07", 
+    url: heroConnectMarkets, 
     title: "Connect with Markets",
     description: "Find buyers for your agricultural products and connect with markets across South Sudan."
   },
   {
-    url: "https://images.unsplash.com/photo-1472396961693-142e6e269027",
+    url: heroAgriculturalServices,
     title: "Access Agricultural Services",
     description: "Access high-quality agricultural services and inputs for improved farming."
   },
   {
-    url: "https://images.unsplash.com/photo-1493962853295-0fd70327578a",
+    url: heroFarmingTechniques,
     title: "Learn Farming Techniques",
     description: "Learn modern farming techniques to increase your productivity and income."
   }
