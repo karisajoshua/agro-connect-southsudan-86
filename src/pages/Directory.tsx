@@ -15,9 +15,10 @@ const Directory = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
   const [registerBusinessModalOpen, setRegisterBusinessModalOpen] = useState(false);
   
-  const { data: businesses = [], isLoading: loading } = useBusinesses();
+  const { data: businesses = [], isLoading: loading } = useBusinesses(true); // Only approved businesses
   const { data: categories = [] } = useBusinessCategories();
   
   // Extract unique locations from businesses
@@ -43,6 +44,11 @@ const Directory = () => {
   }, [searchParams]);
   
   const filteredBusinesses = businesses.filter(business => {
+    // Filter by active tab (business type)
+    const matchesTab = activeTab === "all" 
+      ? true 
+      : business.business_type.toLowerCase() === activeTab.slice(0, -1); // Remove 's' from plurals
+    
     const matchesSearch = 
       business.business_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (business.description?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
@@ -64,14 +70,14 @@ const Directory = () => {
       ? locationStr.includes(selectedLocation.toLowerCase())
       : true;
     
-    return matchesSearch && matchesCategory && matchesProduct && matchesLocation;
+    return matchesTab && matchesSearch && matchesCategory && matchesProduct && matchesLocation;
   });
   
   return (
     <div className="container mx-auto py-6">
       <h1 className="text-3xl font-bold text-agro-blue mb-6">Directory</h1>
       
-      <Tabs defaultValue="all" className="w-full mb-6">
+      <Tabs defaultValue="all" className="w-full mb-6" onValueChange={setActiveTab}>
         <TabsList className="grid grid-cols-5 w-full">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="cooperatives">Cooperatives</TabsTrigger>
@@ -219,20 +225,380 @@ const Directory = () => {
           </div>
         </TabsContent>
         
-        <TabsContent value="cooperatives">
-          <p className="p-4 text-center">Cooperatives directory content will be displayed here.</p>
+        <TabsContent value="cooperatives" className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Input
+              placeholder="Search cooperatives..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Select onValueChange={setSelectedLocation}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-locations">All Locations</SelectItem>
+                {uniqueLocations.map((location) => (
+                  <SelectItem key={location} value={location}>
+                    {location}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {loading ? (
+            <div className="text-center py-10">
+              <p>Loading cooperatives...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredBusinesses.map((business) => {
+                const locationData = typeof business.location === 'object' 
+                  ? business.location as any
+                  : { city: "N/A" };
+                
+                return (
+                  <Card key={business.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <CardTitle className="text-agro-blue">{business.business_name}</CardTitle>
+                      <CardDescription className="capitalize">{business.business_type}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex items-start gap-2">
+                          <Package className="w-4 h-4 mt-0.5 text-agro-green flex-shrink-0" />
+                          <div>
+                            <strong>Products:</strong> {business.products_services || "Not specified"}
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <MapPin className="w-4 h-4 mt-0.5 text-agro-blue flex-shrink-0" />
+                          <div>
+                            <strong>Location:</strong> {
+                              locationData.address && locationData.state 
+                                ? `${locationData.address}, ${locationData.state}`
+                                : locationData.address || locationData.state || "N/A"
+                            }
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Phone className="w-4 h-4 mt-0.5 text-agro-orange flex-shrink-0" />
+                          <div>
+                            <strong>Contact:</strong> {business.phone}
+                          </div>
+                        </div>
+                        {business.description && (
+                          <p className="mt-2 text-muted-foreground line-clamp-2">
+                            {business.description}
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button variant="outline" className="w-full" asChild>
+                        <a href={`tel:${business.phone}`}>Contact</a>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              })}
+              
+              {filteredBusinesses.length === 0 && (
+                <div className="col-span-full text-center py-10">
+                  <p className="text-muted-foreground">No cooperatives found.</p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          <div className="mt-8 text-center">
+            <Button variant="outline" onClick={() => setRegisterBusinessModalOpen(true)}>
+              Register Your Business
+            </Button>
+          </div>
         </TabsContent>
         
-        <TabsContent value="suppliers">
-          <p className="p-4 text-center">Suppliers directory content will be displayed here.</p>
+        <TabsContent value="suppliers" className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Input
+              placeholder="Search suppliers..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Select onValueChange={setSelectedLocation}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-locations">All Locations</SelectItem>
+                {uniqueLocations.map((location) => (
+                  <SelectItem key={location} value={location}>
+                    {location}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {loading ? (
+            <div className="text-center py-10">
+              <p>Loading suppliers...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredBusinesses.map((business) => {
+                const locationData = typeof business.location === 'object' 
+                  ? business.location as any
+                  : { city: "N/A" };
+                
+                return (
+                  <Card key={business.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <CardTitle className="text-agro-blue">{business.business_name}</CardTitle>
+                      <CardDescription className="capitalize">{business.business_type}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex items-start gap-2">
+                          <Package className="w-4 h-4 mt-0.5 text-agro-green flex-shrink-0" />
+                          <div>
+                            <strong>Products:</strong> {business.products_services || "Not specified"}
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <MapPin className="w-4 h-4 mt-0.5 text-agro-blue flex-shrink-0" />
+                          <div>
+                            <strong>Location:</strong> {
+                              locationData.address && locationData.state 
+                                ? `${locationData.address}, ${locationData.state}`
+                                : locationData.address || locationData.state || "N/A"
+                            }
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Phone className="w-4 h-4 mt-0.5 text-agro-orange flex-shrink-0" />
+                          <div>
+                            <strong>Contact:</strong> {business.phone}
+                          </div>
+                        </div>
+                        {business.description && (
+                          <p className="mt-2 text-muted-foreground line-clamp-2">
+                            {business.description}
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button variant="outline" className="w-full" asChild>
+                        <a href={`tel:${business.phone}`}>Contact</a>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              })}
+              
+              {filteredBusinesses.length === 0 && (
+                <div className="col-span-full text-center py-10">
+                  <p className="text-muted-foreground">No suppliers found.</p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          <div className="mt-8 text-center">
+            <Button variant="outline" onClick={() => setRegisterBusinessModalOpen(true)}>
+              Register Your Business
+            </Button>
+          </div>
         </TabsContent>
         
-        <TabsContent value="transporters">
-          <p className="p-4 text-center">Transporters directory content will be displayed here.</p>
+        <TabsContent value="transporters" className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Input
+              placeholder="Search transporters..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Select onValueChange={setSelectedLocation}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-locations">All Locations</SelectItem>
+                {uniqueLocations.map((location) => (
+                  <SelectItem key={location} value={location}>
+                    {location}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {loading ? (
+            <div className="text-center py-10">
+              <p>Loading transporters...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredBusinesses.map((business) => {
+                const locationData = typeof business.location === 'object' 
+                  ? business.location as any
+                  : { city: "N/A" };
+                
+                return (
+                  <Card key={business.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <CardTitle className="text-agro-blue">{business.business_name}</CardTitle>
+                      <CardDescription className="capitalize">{business.business_type}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex items-start gap-2">
+                          <Package className="w-4 h-4 mt-0.5 text-agro-green flex-shrink-0" />
+                          <div>
+                            <strong>Products:</strong> {business.products_services || "Not specified"}
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <MapPin className="w-4 h-4 mt-0.5 text-agro-blue flex-shrink-0" />
+                          <div>
+                            <strong>Location:</strong> {
+                              locationData.address && locationData.state 
+                                ? `${locationData.address}, ${locationData.state}`
+                                : locationData.address || locationData.state || "N/A"
+                            }
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Phone className="w-4 h-4 mt-0.5 text-agro-orange flex-shrink-0" />
+                          <div>
+                            <strong>Contact:</strong> {business.phone}
+                          </div>
+                        </div>
+                        {business.description && (
+                          <p className="mt-2 text-muted-foreground line-clamp-2">
+                            {business.description}
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button variant="outline" className="w-full" asChild>
+                        <a href={`tel:${business.phone}`}>Contact</a>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              })}
+              
+              {filteredBusinesses.length === 0 && (
+                <div className="col-span-full text-center py-10">
+                  <p className="text-muted-foreground">No transporters found.</p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          <div className="mt-8 text-center">
+            <Button variant="outline" onClick={() => setRegisterBusinessModalOpen(true)}>
+              Register Your Business
+            </Button>
+          </div>
         </TabsContent>
         
-        <TabsContent value="consultants">
-          <p className="p-4 text-center">Consultants directory content will be displayed here.</p>
+        <TabsContent value="consultants" className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Input
+              placeholder="Search consultants..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Select onValueChange={setSelectedLocation}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-locations">All Locations</SelectItem>
+                {uniqueLocations.map((location) => (
+                  <SelectItem key={location} value={location}>
+                    {location}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {loading ? (
+            <div className="text-center py-10">
+              <p>Loading consultants...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredBusinesses.map((business) => {
+                const locationData = typeof business.location === 'object' 
+                  ? business.location as any
+                  : { city: "N/A" };
+                
+                return (
+                  <Card key={business.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <CardTitle className="text-agro-blue">{business.business_name}</CardTitle>
+                      <CardDescription className="capitalize">{business.business_type}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex items-start gap-2">
+                          <Package className="w-4 h-4 mt-0.5 text-agro-green flex-shrink-0" />
+                          <div>
+                            <strong>Products:</strong> {business.products_services || "Not specified"}
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <MapPin className="w-4 h-4 mt-0.5 text-agro-blue flex-shrink-0" />
+                          <div>
+                            <strong>Location:</strong> {
+                              locationData.address && locationData.state 
+                                ? `${locationData.address}, ${locationData.state}`
+                                : locationData.address || locationData.state || "N/A"
+                            }
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Phone className="w-4 h-4 mt-0.5 text-agro-orange flex-shrink-0" />
+                          <div>
+                            <strong>Contact:</strong> {business.phone}
+                          </div>
+                        </div>
+                        {business.description && (
+                          <p className="mt-2 text-muted-foreground line-clamp-2">
+                            {business.description}
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button variant="outline" className="w-full" asChild>
+                        <a href={`tel:${business.phone}`}>Contact</a>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              })}
+              
+              {filteredBusinesses.length === 0 && (
+                <div className="col-span-full text-center py-10">
+                  <p className="text-muted-foreground">No consultants found.</p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          <div className="mt-8 text-center">
+            <Button variant="outline" onClick={() => setRegisterBusinessModalOpen(true)}>
+              Register Your Business
+            </Button>
+          </div>
         </TabsContent>
       </Tabs>
       

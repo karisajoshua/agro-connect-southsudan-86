@@ -1,17 +1,24 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export const useBusinesses = () => {
+export const useBusinesses = (approvedOnly: boolean = true) => {
   return useQuery({
-    queryKey: ["businesses"],
+    queryKey: ["businesses", approvedOnly],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("businesses")
         .select(`
           *,
           category:business_categories(name, icon)
         `)
         .order("created_at", { ascending: false });
+
+      // Filter for approved businesses only on public pages
+      if (approvedOnly) {
+        query = query.eq("verification_status", "approved");
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       return data;
