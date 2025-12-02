@@ -1,24 +1,32 @@
+import cerealsImg from "@/assets/categories/cereals.jpg";
+import legumesImg from "@/assets/categories/legumes.jpg";
+import vegetablesImg from "@/assets/categories/vegetables.jpg";
+import fruitsImg from "@/assets/categories/fruits.jpg";
+import poultryImg from "@/assets/categories/poultry.jpg";
+import livestockImg from "@/assets/categories/livestock.jpg";
+import cashCropsImg from "@/assets/categories/cash-crops.jpg";
+import fishHoneyImg from "@/assets/categories/fish-honey.jpg";
 
 export const TopCategories = [
   { 
     name: "Cereals", 
     link: "/directory?category=cereals",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/cereals.jpg"
+    image: cerealsImg
   },
   { 
     name: "Legumes", 
     link: "/directory?category=legumes",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/legumes.jpg"
+    image: legumesImg
   },
   { 
     name: "Vegetables", 
     link: "/directory?category=vegetables",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/vegetables.jpg"
+    image: vegetablesImg
   },
   { 
     name: "Fruits", 
     link: "/directory?category=fruits",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/fruits.jpg"
+    image: fruitsImg
   },
   { 
     name: "Ad Space", 
@@ -32,22 +40,22 @@ export const BottomCategories = [
   { 
     name: "Poultry", 
     link: "/directory?category=poultry",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/poultry.jpg"
+    image: poultryImg
   },
   { 
     name: "Livestock", 
     link: "/directory?category=livestock",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/livestock.jpg"
+    image: livestockImg
   },
   { 
     name: "Cash crops", 
     link: "/directory?category=cash-crops",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/cash-crops.jpg"
+    image: cashCropsImg
   },
   { 
     name: "Fish & honey", 
     link: "/directory?category=fish-honey",
-    image: "https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan/fish-honey.jpg"
+    image: fishHoneyImg
   },
   { 
     name: "Ad Space", 
