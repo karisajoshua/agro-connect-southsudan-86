@@ -150,7 +150,11 @@ const Directory = () => {
                         <div className="flex items-start gap-2">
                           <MapPin className="w-4 h-4 mt-0.5 text-agro-blue flex-shrink-0" />
                           <div>
-                            <strong>Location:</strong> {locationData.city || locationData.district || "N/A"}
+                            <strong>Location:</strong> {
+                              locationData.address && locationData.state 
+                                ? `${locationData.address}, ${locationData.state}`
+                                : locationData.address || locationData.state || locationData.city || locationData.district || "N/A"
+                            }
                           </div>
                         </div>
                         
