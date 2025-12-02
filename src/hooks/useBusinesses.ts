@@ -19,6 +19,21 @@ export const useBusinesses = () => {
   });
 };
 
+export const useBusinessCategories = () => {
+  return useQuery({
+    queryKey: ["business-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("business_categories")
+        .select("id, name")
+        .order("name");
+
+      if (error) throw error;
+      return data;
+    },
+  });
+};
+
 export const useBusinessStats = () => {
   return useQuery({
     queryKey: ["business-stats"],

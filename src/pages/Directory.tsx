@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RegisterBusinessModal from "@/components/directory/RegisterBusinessModal";
-import { useBusinesses } from "@/hooks/useBusinesses";
+import { useBusinesses, useBusinessCategories } from "@/hooks/useBusinesses";
 import { Phone, MapPin, Package } from "lucide-react";
 
 const Directory = () => {
@@ -18,6 +18,20 @@ const Directory = () => {
   const [registerBusinessModalOpen, setRegisterBusinessModalOpen] = useState(false);
   
   const { data: businesses = [], isLoading: loading } = useBusinesses();
+  const { data: categories = [] } = useBusinessCategories();
+  
+  // Extract unique locations from businesses
+  const uniqueLocations = useMemo(() => {
+    const locationSet = new Set<string>();
+    businesses.forEach(business => {
+      if (business.location && typeof business.location === 'object') {
+        const loc = business.location as any;
+        if (loc.state) locationSet.add(loc.state);
+        if (loc.address) locationSet.add(loc.address);
+      }
+    });
+    return Array.from(locationSet).sort();
+  }, [businesses]);
 
   // Get category and product from URL params
   useEffect(() => {
@@ -80,11 +94,11 @@ const Directory = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all-categories">All Categories</SelectItem>
-                <SelectItem value="Multiple">Multiple</SelectItem>
-                <SelectItem value="Seeds & Fertilizers">Seeds & Fertilizers</SelectItem>
-                <SelectItem value="Livestock">Livestock</SelectItem>
-                <SelectItem value="Logistics">Logistics</SelectItem>
-                <SelectItem value="Advisory">Advisory</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.name}>
+                    {category.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             
@@ -94,10 +108,11 @@ const Directory = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all-locations">All Locations</SelectItem>
-                <SelectItem value="Juba">Juba</SelectItem>
-                <SelectItem value="Wau">Wau</SelectItem>
-                <SelectItem value="Malakal">Malakal</SelectItem>
-                <SelectItem value="Yambio">Yambio</SelectItem>
+                {uniqueLocations.map((location) => (
+                  <SelectItem key={location} value={location}>
+                    {location}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
