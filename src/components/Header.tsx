@@ -43,7 +43,7 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
         {/* Logo */}
         <div className="flex items-center">
           <Link to="/" className="flex items-center">
-            <div className="w-36 h-20 flex items-center mr-3">
+            <div className="w-54 h-30 flex items-center mr-3">
               <img
                 src="https://wsgsygmyyiybfaynmzok.supabase.co/storage/v1/object/public/southsudan//ssd%20logo.png"
                 alt="South Sudan Agro Marketplace Logo"
