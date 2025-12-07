@@ -16,10 +16,10 @@ import {
 import { 
   Users, 
   Search, 
-  Plus, 
   Filter, 
   Building2,
-  Phone
+  Phone,
+  Pencil
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,14 +33,69 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useCooperatives, useCooperativeStats } from "@/hooks/useCooperatives";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CooperativesList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [locationFilter, setLocationFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedCoop, setSelectedCoop] = useState<any>(null);
+  const [memberCount, setMemberCount] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const { data: cooperatives, isLoading } = useCooperatives();
   const { data: stats } = useCooperativeStats();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const handleEditMembers = (coop: any) => {
+    setSelectedCoop(coop);
+    setMemberCount(String(coop.total_members || 0));
+    setEditDialogOpen(true);
+  };
+
+  const handleUpdateMembers = async () => {
+    if (!selectedCoop) return;
+    
+    setIsUpdating(true);
+    try {
+      const { error } = await supabase
+        .from("cooperatives")
+        .update({ total_members: parseInt(memberCount) || 0 })
+        .eq("id", selectedCoop.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Member count updated successfully",
+      });
+      
+      queryClient.invalidateQueries({ queryKey: ["cooperatives"] });
+      queryClient.invalidateQueries({ queryKey: ["cooperative-stats"] });
+      setEditDialogOpen(false);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update member count",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   // Filter cooperatives based on search and filters
   const filteredCooperatives = (cooperatives || []).filter(coop => {
@@ -149,6 +204,7 @@ const CooperativesList = () => {
                 <TableHead>Products/Services</TableHead>
                 <TableHead>Contact</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -182,11 +238,21 @@ const CooperativesList = () => {
                     <TableCell>
                       {getStatusBadge(coop.business?.verification_status || 'pending')}
                     </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditMembers(coop)}
+                      >
+                        <Pencil className="h-4 w-4 mr-1" />
+                        Edit
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center py-6 text-muted-foreground">
                     No cooperatives found matching your filters
                   </TableCell>
                 </TableRow>
@@ -242,6 +308,37 @@ const CooperativesList = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Edit Members Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Member Count</DialogTitle>
+            <DialogDescription>
+              Update the number of members for {selectedCoop?.business?.business_name}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Label htmlFor="memberCount">Number of Members</Label>
+            <Input
+              id="memberCount"
+              type="number"
+              min="0"
+              value={memberCount}
+              onChange={(e) => setMemberCount(e.target.value)}
+              className="mt-2"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateMembers} disabled={isUpdating}>
+              {isUpdating ? "Updating..." : "Update"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
