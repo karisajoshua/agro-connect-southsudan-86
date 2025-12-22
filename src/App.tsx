@@ -40,6 +40,8 @@ import TrainingsManagement from "./pages/admin/TrainingsManagement";
 import UserEngagement from "./pages/admin/UserEngagement";
 import Analytics from "./pages/admin/Analytics";
 import Settings from "./pages/admin/Settings";
+import EcommerceProductsAdmin from "./pages/admin/EcommerceProducts";
+import OrdersAdmin from "./pages/admin/OrdersManagement";
 import Auth from "./pages/Auth";
 
 const queryClient = new QueryClient();
@@ -87,6 +89,8 @@ const App = () => (
             <Route path="news" element={<NewsManagement />} />
             <Route path="publications" element={<PublicationsManagement />} />
             <Route path="trainings" element={<TrainingsManagement />} />
+            <Route path="ecommerce" element={<EcommerceProductsAdmin />} />
+            <Route path="orders" element={<OrdersAdmin />} />
             <Route path="engagement" element={<UserEngagement />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />
