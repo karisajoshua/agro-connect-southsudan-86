@@ -19,6 +19,11 @@ import FAQsPage from "./pages/FAQs";
 import ContactPage from "./pages/ContactUs";
 import NotFoundPage from "./pages/NotFound";
 import DiseaseReportPage from "./pages/DiseaseReport";
+import Shop from "./pages/Shop";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import OrderConfirmation from "./pages/OrderConfirmation";
+import MyOrders from "./pages/MyOrders";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -62,6 +67,11 @@ const App = () => (
             <Route path="contact" element={<ContactPage />} />
             <Route path="disease-report" element={<DiseaseReportPage />} />
             <Route path="auth" element={<Auth />} />
+            <Route path="shop" element={<Shop />} />
+            <Route path="cart" element={<Cart />} />
+            <Route path="checkout" element={<Checkout />} />
+            <Route path="order-confirmation/:orderId" element={<OrderConfirmation />} />
+            <Route path="my-orders" element={<MyOrders />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
           
