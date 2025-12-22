@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import AdminLink from "./AdminLink";
+import CartIcon from "./shop/CartIcon";
+import CartDrawer from "./shop/CartDrawer";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -13,6 +15,7 @@ interface HeaderProps {
 const Header = ({ toggleSidebar }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const location = useLocation();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -105,6 +108,9 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
             ))}
           </div>
 
+          {/* Cart Icon */}
+          <CartIcon onClick={() => setCartOpen(true)} />
+
           {/* Admin Link */}
           <AdminLink />
 
@@ -146,6 +152,9 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
           </div>
         </div>
       </nav>
+
+      {/* Cart Drawer */}
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </header>
   );
 };

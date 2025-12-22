@@ -17,6 +17,8 @@ import {
   ChartBar,
   Home,
   LogOut,
+  ShoppingCart,
+  Package,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -151,6 +153,21 @@ const AdminDashboard = () => {
               title="Outbreak Map"
               to="/admin/outbreak-map"
               active={currentPath.includes("/admin/outbreak-map")}
+            />
+          </SidebarGroup>
+
+          <SidebarGroup title="E-Commerce" defaultOpen={true}>
+            <SidebarItem
+              icon={<Package size={18} />}
+              title="Products"
+              to="/admin/ecommerce"
+              active={currentPath.includes("/admin/ecommerce")}
+            />
+            <SidebarItem
+              icon={<ShoppingCart size={18} />}
+              title="Orders"
+              to="/admin/orders"
+              active={currentPath.includes("/admin/orders")}
             />
           </SidebarGroup>
 

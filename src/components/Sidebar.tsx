@@ -74,7 +74,7 @@ const Sidebar = () => {
                 {category.subcategories.map((subcategory, subIndex) => (
                   <Link
                     key={subIndex}
-                    to={`/directory?category=${encodeURIComponent(category.name.toLowerCase())}&subcategory=${encodeURIComponent(subcategory.toLowerCase())}`}
+                    to={`/shop?category=${encodeURIComponent(category.name.toLowerCase())}&subcategory=${encodeURIComponent(subcategory.toLowerCase())}`}
                     className="block px-6 py-1.5 text-sm hover:bg-agro-green/10 hover:text-agro-blue transition-colors"
                   >
                     {subcategory}
