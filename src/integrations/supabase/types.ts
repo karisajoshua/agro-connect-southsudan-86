@@ -106,6 +106,38 @@ export type Database = {
           },
         ]
       }
+      cart_items: {
+        Row: {
+          created_at: string
+          ecommerce_product_id: string
+          id: string
+          quantity: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ecommerce_product_id: string
+          id?: string
+          quantity?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ecommerce_product_id?: string
+          id?: string
+          quantity?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_ecommerce_product_id_fkey"
+            columns: ["ecommerce_product_id"]
+            isOneToOne: false
+            referencedRelation: "ecommerce_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_conversations: {
         Row: {
           created_at: string | null
@@ -515,6 +547,75 @@ export type Database = {
         }
         Relationships: []
       }
+      ecommerce_products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_available: boolean | null
+          min_order_quantity: number | null
+          name: string
+          price: number
+          product_id: string | null
+          seller_id: string | null
+          stock_quantity: number | null
+          subcategory: string | null
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_available?: boolean | null
+          min_order_quantity?: number | null
+          name: string
+          price: number
+          product_id?: string | null
+          seller_id?: string | null
+          stock_quantity?: number | null
+          subcategory?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_available?: boolean | null
+          min_order_quantity?: number | null
+          name?: string
+          price?: number
+          product_id?: string | null
+          seller_id?: string | null
+          stock_quantity?: number | null
+          subcategory?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecommerce_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ecommerce_products_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       farming_tips: {
         Row: {
           category: string | null
@@ -646,6 +747,96 @@ export type Database = {
           published_at?: string | null
           title?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          ecommerce_product_id: string
+          id: string
+          order_id: string
+          product_name: string
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          ecommerce_product_id: string
+          id?: string
+          order_id: string
+          product_name: string
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          ecommerce_product_id?: string
+          id?: string
+          order_id?: string
+          product_name?: string
+          quantity?: number
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_ecommerce_product_id_fkey"
+            columns: ["ecommerce_product_id"]
+            isOneToOne: false
+            referencedRelation: "ecommerce_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          delivery_address: Json
+          id: string
+          notes: string | null
+          order_number: string
+          payment_method: string | null
+          payment_status: string | null
+          status: string
+          total_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delivery_address: Json
+          id?: string
+          notes?: string | null
+          order_number: string
+          payment_method?: string | null
+          payment_status?: string | null
+          status?: string
+          total_amount: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delivery_address?: Json
+          id?: string
+          notes?: string | null
+          order_number?: string
+          payment_method?: string | null
+          payment_status?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
