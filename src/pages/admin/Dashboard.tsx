@@ -20,6 +20,7 @@ import {
   ShoppingCart,
   Package,
   Image,
+  Mail,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -196,6 +197,15 @@ const AdminDashboard = () => {
               title="Media Library"
               to="/admin/media"
               active={currentPath.includes("/admin/media")}
+            />
+          </SidebarGroup>
+
+          <SidebarGroup title="Marketing" defaultOpen={true}>
+            <SidebarItem
+              icon={<Mail size={18} />}
+              title="Newsletter Subscribers"
+              to="/admin/newsletter"
+              active={currentPath.includes("/admin/newsletter")}
             />
           </SidebarGroup>
 

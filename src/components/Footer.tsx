@@ -2,22 +2,40 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail, Youtube } from "lucide-react";
+import { Mail, Youtube, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSubscribeNewsletter } from "@/hooks/useNewsletter";
+import { z } from "zod";
+
+const emailSchema = z.string().email("Please enter a valid email address");
+
 const Footer = () => {
   const [email, setEmail] = useState("");
-  const {
-    toast
-  } = useToast();
-  const handleSubscribe = (e: React.FormEvent) => {
+  const { toast } = useToast();
+  const subscribeNewsletter = useSubscribeNewsletter();
+
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
+    
+    const result = emailSchema.safeParse(email);
+    if (!result.success) {
       toast({
-        title: "Subscription successful!",
-        description: "Thank you for subscribing to our newsletter."
+        title: "Invalid email",
+        description: result.error.errors[0].message,
+        variant: "destructive",
       });
-      setEmail("");
+      return;
     }
+
+    subscribeNewsletter.mutate(email, {
+      onSuccess: () => {
+        toast({
+          title: "Subscription successful!",
+          description: "Thank you for subscribing to our newsletter.",
+        });
+        setEmail("");
+      },
+    });
   };
   return <footer className="bg-agro-blue text-white">
       <div className="container mx-auto p-6">
@@ -50,9 +68,27 @@ const Footer = () => {
               Subscribe to receive updates on agricultural news, market prices, and opportunities.
             </p>
             <form onSubmit={handleSubscribe} className="flex flex-col space-y-2">
-              <Input type="email" placeholder="Your email address" value={email} onChange={e => setEmail(e.target.value)} className="bg-white/20 border-white/10 focus:border-white placeholder:text-white/50 text-white" />
-              <Button type="submit" className="bg-agro-green text-agro-blue hover:bg-agro-green/90">
-                Subscribe
+              <Input 
+                type="email" 
+                placeholder="Your email address" 
+                value={email} 
+                onChange={e => setEmail(e.target.value)} 
+                className="bg-white/20 border-white/10 focus:border-white placeholder:text-white/50 text-white"
+                disabled={subscribeNewsletter.isPending}
+              />
+              <Button 
+                type="submit" 
+                className="bg-agro-green text-agro-blue hover:bg-agro-green/90"
+                disabled={subscribeNewsletter.isPending}
+              >
+                {subscribeNewsletter.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Subscribing...
+                  </>
+                ) : (
+                  "Subscribe"
+                )}
               </Button>
             </form>
           </div>
