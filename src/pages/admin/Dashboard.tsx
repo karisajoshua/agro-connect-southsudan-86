@@ -19,6 +19,7 @@ import {
   LogOut,
   ShoppingCart,
   Package,
+  Image,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -189,6 +190,12 @@ const AdminDashboard = () => {
               title="Trainings"
               to="/admin/trainings"
               active={currentPath.includes("/admin/trainings")}
+            />
+            <SidebarItem
+              icon={<Image size={18} />}
+              title="Media Library"
+              to="/admin/media"
+              active={currentPath.includes("/admin/media")}
             />
           </SidebarGroup>
 
