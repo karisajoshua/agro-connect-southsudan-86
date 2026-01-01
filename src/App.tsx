@@ -44,6 +44,7 @@ import Settings from "./pages/admin/Settings";
 import EcommerceProductsAdmin from "./pages/admin/EcommerceProducts";
 import OrdersAdmin from "./pages/admin/OrdersManagement";
 import MediaLibrary from "./pages/admin/MediaLibrary";
+import NewsletterSubscribers from "./pages/admin/NewsletterSubscribers";
 import Auth from "./pages/Auth";
 
 const queryClient = new QueryClient();
@@ -95,6 +96,7 @@ const App = () => (
               <Route path="ecommerce" element={<EcommerceProductsAdmin />} />
               <Route path="orders" element={<OrdersAdmin />} />
               <Route path="media" element={<MediaLibrary />} />
+              <Route path="newsletter" element={<NewsletterSubscribers />} />
               <Route path="engagement" element={<UserEngagement />} />
               <Route path="analytics" element={<Analytics />} />
               <Route path="settings" element={<Settings />} />
