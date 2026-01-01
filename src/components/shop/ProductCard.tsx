@@ -4,7 +4,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAddToCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 import { EcommerceProduct } from "@/hooks/useEcommerceProducts";
+import { getProductImage } from "@/utils/productImages";
 
 interface ProductCardProps {
   product: EcommerceProduct;
@@ -19,6 +21,7 @@ const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const addToCart = useAddToCart();
+  const { openCart } = useCart();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -26,7 +29,14 @@ const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
       navigate("/auth?redirect=/shop");
       return;
     }
-    addToCart.mutate({ productId: product.id });
+    addToCart.mutate(
+      { productId: product.id },
+      {
+        onSuccess: () => {
+          openCart();
+        },
+      }
+    );
   };
 
   const handleClick = () => {
@@ -35,7 +45,7 @@ const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
     }
   };
 
-  const defaultImage = "https://images.unsplash.com/photo-1560493676-04071c5f467b?w=400&h=300&fit=crop";
+  const imageUrl = getProductImage(product.name, product.image_url);
 
   return (
     <Card 
@@ -44,7 +54,7 @@ const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
     >
       <div className="relative h-32 md:h-40 overflow-hidden">
         <img
-          src={product.image_url || defaultImage}
+          src={imageUrl}
           alt={product.name}
           className="w-full h-full object-cover transition-transform group-hover:scale-105"
         />

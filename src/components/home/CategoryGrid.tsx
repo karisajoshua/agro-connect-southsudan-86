@@ -8,6 +8,8 @@ import { useEcommerceProducts, EcommerceProduct } from "@/hooks/useEcommerceProd
 import { useAddToCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
+import { getProductImage } from "@/utils/productImages";
 
 export interface CategoryItem {
   name: string;
@@ -29,27 +31,7 @@ const CategoryGrid = ({ title, categories }: CategoryGridProps) => {
   const addToCart = useAddToCart();
   const { user } = useAuth();
   const navigate = useNavigate();
-
-  // Map categories to their products
-  const getCategoryProducts = (categoryName: string) => {
-    const categoryMap: Record<string, string[]> = {
-      "Cereals & Staples": ["cereals", "staples", "maize", "sorghum", "millet", "rice"],
-      "Vegetables": ["vegetables", "onions", "tomatoes", "cabbage"],
-      "Legumes": ["legumes", "beans", "groundnuts", "cowpeas"],
-      "Fruits": ["fruits", "watermelon", "mango", "orange"],
-      "Cash Crops": ["cash crops", "coffee", "cotton", "simsim", "sesame"],
-      "Fish & Honey": ["fish", "honey"],
-      "Livestock": ["livestock", "cattle", "goats", "sheep"],
-      "Poultry": ["poultry", "chicken", "eggs"],
-    };
-
-    const keywords = categoryMap[categoryName] || [categoryName.toLowerCase()];
-    return products.filter(
-      (p) =>
-        keywords.some((k) => p.category.toLowerCase().includes(k)) ||
-        keywords.some((k) => p.name.toLowerCase().includes(k))
-    );
-  };
+  const { openCart } = useCart();
 
   const handleAddToCart = (e: React.MouseEvent, productId: string) => {
     e.stopPropagation();
@@ -57,10 +39,15 @@ const CategoryGrid = ({ title, categories }: CategoryGridProps) => {
       navigate("/auth?redirect=/shop");
       return;
     }
-    addToCart.mutate({ productId });
+    addToCart.mutate(
+      { productId },
+      {
+        onSuccess: () => {
+          openCart();
+        },
+      }
+    );
   };
-
-  const defaultImage = "https://images.unsplash.com/photo-1560493676-04071c5f467b?w=400&h=300&fit=crop";
 
   // If products are loaded, show products instead of categories
   if (!isLoading && products.length > 0) {
@@ -76,48 +63,51 @@ const CategoryGrid = ({ title, categories }: CategoryGridProps) => {
           </Button>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {displayProducts.map((product) => (
-            <Card
-              key={product.id}
-              className="overflow-hidden transition-all hover:shadow-lg cursor-pointer group"
-              onClick={() => setSelectedProduct(product)}
-            >
-              <div className="relative h-32 overflow-hidden">
-                <img
-                  src={product.image_url || defaultImage}
-                  alt={product.name}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                />
-                <span className="absolute top-2 right-2 bg-agro-green text-white text-xs px-2 py-0.5 rounded-full">
-                  {product.category}
-                </span>
-              </div>
-              <CardContent className="p-2">
-                <h3 className="font-semibold text-sm truncate">{product.name}</h3>
-                {product.seller && (
-                  <p className="text-xs text-muted-foreground truncate">
-                    {product.seller.business_name}
-                  </p>
-                )}
-                <div className="flex items-center justify-between mt-2">
-                  <div>
-                    <p className="text-sm font-bold text-agro-blue">
-                      SSP {formatPrice(product.price)}
-                    </p>
-                    <p className="text-xs text-muted-foreground">per {product.unit}</p>
-                  </div>
-                  <Button
-                    size="sm"
-                    onClick={(e) => handleAddToCart(e, product.id)}
-                    disabled={addToCart.isPending}
-                    className="bg-agro-green hover:bg-agro-green/90 h-7 w-7 p-0"
-                  >
-                    <ShoppingCart size={14} />
-                  </Button>
+          {displayProducts.map((product) => {
+            const imageUrl = getProductImage(product.name, product.image_url);
+            return (
+              <Card
+                key={product.id}
+                className="overflow-hidden transition-all hover:shadow-lg cursor-pointer group"
+                onClick={() => setSelectedProduct(product)}
+              >
+                <div className="relative h-32 overflow-hidden">
+                  <img
+                    src={imageUrl}
+                    alt={product.name}
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                  />
+                  <span className="absolute top-2 right-2 bg-agro-green text-white text-xs px-2 py-0.5 rounded-full">
+                    {product.category}
+                  </span>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+                <CardContent className="p-2">
+                  <h3 className="font-semibold text-sm truncate">{product.name}</h3>
+                  {product.seller && (
+                    <p className="text-xs text-muted-foreground truncate">
+                      {product.seller.business_name}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between mt-2">
+                    <div>
+                      <p className="text-sm font-bold text-agro-blue">
+                        SSP {formatPrice(product.price)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">per {product.unit}</p>
+                    </div>
+                    <Button
+                      size="sm"
+                      onClick={(e) => handleAddToCart(e, product.id)}
+                      disabled={addToCart.isPending}
+                      className="bg-agro-green hover:bg-agro-green/90 h-7 w-7 p-0"
+                    >
+                      <ShoppingCart size={14} />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         <ProductModal

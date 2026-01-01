@@ -10,7 +10,9 @@ import { Button } from "@/components/ui/button";
 import { useAddToCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 import { EcommerceProduct } from "@/hooks/useEcommerceProducts";
+import { getProductImage } from "@/utils/productImages";
 
 interface ProductModalProps {
   product: EcommerceProduct | null;
@@ -27,6 +29,7 @@ const ProductModal = ({ product, open, onClose }: ProductModalProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const addToCart = useAddToCart();
+  const { openCart } = useCart();
 
   if (!product) return null;
 
@@ -36,13 +39,19 @@ const ProductModal = ({ product, open, onClose }: ProductModalProps) => {
       onClose();
       return;
     }
-    addToCart.mutate({ productId: product.id, quantity });
-    setQuantity(1);
-    onClose();
+    addToCart.mutate(
+      { productId: product.id, quantity },
+      {
+        onSuccess: () => {
+          setQuantity(1);
+          onClose();
+          openCart();
+        },
+      }
+    );
   };
 
-  const defaultImage = "https://images.unsplash.com/photo-1560493676-04071c5f467b?w=600&h=400&fit=crop";
-
+  const imageUrl = getProductImage(product.name, product.image_url);
   const location = product.seller?.location as { county?: string; state?: string } | undefined;
 
   return (
@@ -55,7 +64,7 @@ const ProductModal = ({ product, open, onClose }: ProductModalProps) => {
         <div className="grid md:grid-cols-2 gap-6">
           <div className="relative">
             <img
-              src={product.image_url || defaultImage}
+              src={imageUrl}
               alt={product.name}
               className="w-full h-64 object-cover rounded-lg"
             />

@@ -1,12 +1,13 @@
-import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronDown, Menu, Search } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useState } from "react";
 import AdminLink from "./AdminLink";
 import CartIcon from "./shop/CartIcon";
 import CartDrawer from "./shop/CartDrawer";
+import { useCart } from "@/contexts/CartContext";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -15,7 +16,7 @@ interface HeaderProps {
 const Header = ({ toggleSidebar }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
+  const { isCartOpen, openCart, closeCart } = useCart();
   const location = useLocation();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -25,6 +26,7 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
 
   const navLinks = [
     { name: "Home", path: "/" },
+    { name: "Shop", path: "/shop" },
     { name: "About Us", path: "/about" },
     { name: "Directory", path: "/directory" },
     { name: "Tenders", path: "/tenders" },
@@ -109,7 +111,7 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
           </div>
 
           {/* Cart Icon */}
-          <CartIcon onClick={() => setCartOpen(true)} />
+          <CartIcon onClick={openCart} />
 
           {/* Admin Link */}
           <AdminLink />
@@ -154,7 +156,7 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
       </nav>
 
       {/* Cart Drawer */}
-      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartDrawer open={isCartOpen} onClose={closeCart} />
     </header>
   );
 };

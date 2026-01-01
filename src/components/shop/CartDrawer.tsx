@@ -1,4 +1,4 @@
-import { Minus, Plus, ShoppingCart, Trash2, X } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Sheet,
@@ -8,9 +8,9 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { useCart, useUpdateCartQuantity, useRemoveFromCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
+import { getProductImage } from "@/utils/productImages";
 
 interface CartDrawerProps {
   open: boolean;
@@ -30,8 +30,6 @@ const CartDrawer = ({ open, onClose }: CartDrawerProps) => {
   const totalAmount = cartItems.reduce((sum, item) => {
     return sum + (item.product?.price || 0) * item.quantity;
   }, 0);
-
-  const defaultImage = "https://images.unsplash.com/photo-1560493676-04071c5f467b?w=100&h=100&fit=crop";
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
@@ -69,7 +67,7 @@ const CartDrawer = ({ open, onClose }: CartDrawerProps) => {
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex gap-3">
                     <img
-                      src={item.product?.image_url || defaultImage}
+                      src={getProductImage(item.product?.name || "", item.product?.image_url)}
                       alt={item.product?.name}
                       className="w-16 h-16 object-cover rounded-md"
                     />

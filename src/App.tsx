@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { CartProvider } from "./contexts/CartContext";
 import Layout from "./components/Layout";
 import HomePage from "./pages/Index";
 import AboutPage from "./pages/AboutUs";
@@ -49,54 +50,56 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<HomePage />} />
-            <Route path="about" element={<AboutPage />} />
-            <Route path="directory" element={<DirectoryPage />} />
-            <Route path="tenders" element={<TendersPage />} />
-            <Route path="news" element={<NewsPage />} />
-            <Route path="tutorials" element={<TutorialsPage />} />
-            <Route path="trainings" element={<TrainingsPage />} />
-            <Route path="consultants" element={<ConsultantsPage />} />
-            <Route path="publications" element={<PublicationsPage />} />
-            <Route path="videos" element={<VideosPage />} />
-            <Route path="podcasts" element={<PodcastsPage />} />
-            <Route path="faqs" element={<FAQsPage />} />
-            <Route path="contact" element={<ContactPage />} />
-            <Route path="disease-report" element={<DiseaseReportPage />} />
-            <Route path="auth" element={<Auth />} />
-            <Route path="shop" element={<Shop />} />
-            <Route path="cart" element={<Cart />} />
-            <Route path="checkout" element={<Checkout />} />
-            <Route path="order-confirmation/:orderId" element={<OrderConfirmation />} />
-            <Route path="my-orders" element={<MyOrders />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-          
-          {/* Admin Routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminDashboard />}>
-            <Route index element={<AdminOverview />} />
-            <Route path="disease-reports" element={<DiseaseReports />} />
-            <Route path="outbreak-map" element={<OutbreakMapPage />} />
-            <Route path="directory" element={<DirectoryManagement />} />
-            <Route path="cooperatives" element={<CooperativesPage />} />
-            <Route path="market-prices" element={<MarketPricesPage />} />
-            <Route path="news" element={<NewsManagement />} />
-            <Route path="publications" element={<PublicationsManagement />} />
-            <Route path="trainings" element={<TrainingsManagement />} />
-            <Route path="ecommerce" element={<EcommerceProductsAdmin />} />
-            <Route path="orders" element={<OrdersAdmin />} />
-            <Route path="engagement" element={<UserEngagement />} />
-            <Route path="analytics" element={<Analytics />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <CartProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="about" element={<AboutPage />} />
+              <Route path="directory" element={<DirectoryPage />} />
+              <Route path="tenders" element={<TendersPage />} />
+              <Route path="news" element={<NewsPage />} />
+              <Route path="tutorials" element={<TutorialsPage />} />
+              <Route path="trainings" element={<TrainingsPage />} />
+              <Route path="consultants" element={<ConsultantsPage />} />
+              <Route path="publications" element={<PublicationsPage />} />
+              <Route path="videos" element={<VideosPage />} />
+              <Route path="podcasts" element={<PodcastsPage />} />
+              <Route path="faqs" element={<FAQsPage />} />
+              <Route path="contact" element={<ContactPage />} />
+              <Route path="disease-report" element={<DiseaseReportPage />} />
+              <Route path="auth" element={<Auth />} />
+              <Route path="shop" element={<Shop />} />
+              <Route path="cart" element={<Cart />} />
+              <Route path="checkout" element={<Checkout />} />
+              <Route path="order-confirmation/:orderId" element={<OrderConfirmation />} />
+              <Route path="my-orders" element={<MyOrders />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+            
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminDashboard />}>
+              <Route index element={<AdminOverview />} />
+              <Route path="disease-reports" element={<DiseaseReports />} />
+              <Route path="outbreak-map" element={<OutbreakMapPage />} />
+              <Route path="directory" element={<DirectoryManagement />} />
+              <Route path="cooperatives" element={<CooperativesPage />} />
+              <Route path="market-prices" element={<MarketPricesPage />} />
+              <Route path="news" element={<NewsManagement />} />
+              <Route path="publications" element={<PublicationsManagement />} />
+              <Route path="trainings" element={<TrainingsManagement />} />
+              <Route path="ecommerce" element={<EcommerceProductsAdmin />} />
+              <Route path="orders" element={<OrdersAdmin />} />
+              <Route path="engagement" element={<UserEngagement />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
