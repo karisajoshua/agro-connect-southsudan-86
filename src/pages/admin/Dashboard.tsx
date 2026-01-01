@@ -172,7 +172,7 @@ const AdminDashboard = () => {
             />
           </SidebarGroup>
 
-          <SidebarGroup title="Content Management">
+          <SidebarGroup title="Content Management" defaultOpen={true}>
             <SidebarItem
               icon={<FileText size={18} />}
               title="News & Articles"
