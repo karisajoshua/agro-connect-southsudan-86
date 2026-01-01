@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,11 +13,24 @@ const formatPrice = (price: number) => new Intl.NumberFormat("en-US").format(pri
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { data: cartItems = [] } = useCart();
+  const { user, loading: authLoading } = useAuth();
+  const { data: cartItems = [], isLoading: cartLoading } = useCart();
   const createOrder = useCreateOrder();
   
   const [form, setForm] = useState({ name: "", phone: "", email: "", address: "", city: "", state: "", notes: "" });
+
+  // Handle redirects in useEffect to avoid React errors
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/auth?redirect=/checkout");
+    }
+  }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    if (!cartLoading && !authLoading && user && cartItems.length === 0) {
+      navigate("/cart");
+    }
+  }, [cartItems, cartLoading, authLoading, user, navigate]);
 
   const totalAmount = cartItems.reduce((sum, item) => sum + (item.product?.price || 0) * item.quantity, 0);
 
@@ -39,8 +52,15 @@ const Checkout = () => {
     }, { onSuccess: (order) => navigate(`/order-confirmation/${order.id}`) });
   };
 
-  if (!user) { navigate("/auth?redirect=/checkout"); return null; }
-  if (cartItems.length === 0) { navigate("/cart"); return null; }
+  // Show loading while checking auth/cart
+  if (authLoading || cartLoading) {
+    return <div className="py-8 text-center">Loading...</div>;
+  }
+
+  // Don't render if redirecting
+  if (!user || cartItems.length === 0) {
+    return null;
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
