@@ -20,6 +20,7 @@ export interface EcommerceProduct {
   seller?: {
     business_name: string;
     location: any;
+    phone: string;
   };
 }
 
@@ -31,7 +32,7 @@ export const useEcommerceProducts = (category?: string, subcategory?: string) =>
         .from("ecommerce_products")
         .select(`
           *,
-          seller:businesses(business_name, location)
+          seller:businesses(business_name, location, phone)
         `)
         .eq("is_available", true)
         .order("created_at", { ascending: false });
@@ -58,7 +59,7 @@ export const useAllEcommerceProducts = () => {
         .from("ecommerce_products")
         .select(`
           *,
-          seller:businesses(business_name, location)
+          seller:businesses(business_name, location, phone)
         `)
         .order("created_at", { ascending: false });
 

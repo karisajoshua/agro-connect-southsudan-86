@@ -26,7 +26,7 @@ const SubCategoryModal = ({
   const subs = subCategories[category] || [];
 
   const handleSubCategoryClick = (subCategory: SubCategory) => {
-    navigate(`/directory?category=${category}&product=${encodeURIComponent(subCategory.name)}`);
+    navigate(`/shop?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subCategory.name)}`);
     onClose();
   };
 
