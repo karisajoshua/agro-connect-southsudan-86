@@ -6,17 +6,20 @@ export interface SubCategory {
 export const subCategories: Record<string, SubCategory[]> = {
   cereals: [
     { name: "Maize grains", category: "cereals" },
-    { name: "Rice", category: "cereals" },
-    { name: "Maize flour", category: "cereals" },
     { name: "Maize seeds", category: "cereals" },
+    { name: "Maize flour", category: "cereals" },
+    { name: "Rice", category: "cereals" },
     { name: "Sorghum", category: "cereals" },
+    { name: "Millet", category: "cereals" },
     { name: "Wheat", category: "cereals" },
+    { name: "Cassava", category: "cereals" },
   ],
   legumes: [
     { name: "Beans", category: "legumes" },
     { name: "Groundnuts", category: "legumes" },
+    { name: "Cowpeas", category: "legumes" },
+    { name: "Soyabeans", category: "legumes" },
     { name: "Peas", category: "legumes" },
-    { name: "Simsim", category: "legumes" },
     { name: "Lentils", category: "legumes" },
   ],
   vegetables: [
@@ -24,6 +27,7 @@ export const subCategories: Record<string, SubCategory[]> = {
     { name: "Onions", category: "vegetables" },
     { name: "Cabbage", category: "vegetables" },
     { name: "Okra", category: "vegetables" },
+    { name: "Spinach", category: "vegetables" },
     { name: "Eggplant", category: "vegetables" },
   ],
   fruits: [
@@ -49,6 +53,7 @@ export const subCategories: Record<string, SubCategory[]> = {
   "cash-crops": [
     { name: "Coffee", category: "cash-crops" },
     { name: "Cotton", category: "cash-crops" },
+    { name: "Simsim", category: "cash-crops" },
     { name: "Tobacco", category: "cash-crops" },
     { name: "Tea", category: "cash-crops" },
   ],
