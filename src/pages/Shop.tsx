@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEcommerceProducts } from "@/hooks/useEcommerceProducts";
+import { useCooperativeVendors } from "@/hooks/useCooperativeVendors";
 import ProductGrid from "@/components/shop/ProductGrid";
 import VendorListingView from "@/components/shop/VendorListingView";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,11 @@ const Shop = () => {
   const subcategory = searchParams.get("subcategory") || undefined;
   const [searchQuery, setSearchQuery] = useState("");
   
-  const { data: products = [], isLoading } = useEcommerceProducts(category, subcategory);
+  // For general product browsing (no subcategory selected)
+  const { data: products = [], isLoading: productsLoading } = useEcommerceProducts(category, subcategory);
+  
+  // For vendor listing when subcategory is selected
+  const { data: vendors = [], isLoading: vendorsLoading } = useCooperativeVendors(subcategory);
 
   const filteredProducts = searchQuery
     ? products.filter((p) =>
@@ -22,7 +27,7 @@ const Shop = () => {
       )
     : products;
 
-  // If subcategory is specified, show vendor listing view
+  // If subcategory is specified, show vendor listing view with cooperatives
   if (subcategory && category) {
     return (
       <div className="space-y-6">
@@ -35,10 +40,10 @@ const Shop = () => {
           Back
         </Button>
         <VendorListingView 
-          products={filteredProducts} 
+          vendors={vendors} 
           subcategory={subcategory}
           category={category}
-          isLoading={isLoading}
+          isLoading={vendorsLoading}
         />
       </div>
     );
@@ -72,7 +77,7 @@ const Shop = () => {
           />
         </div>
       </div>
-      <ProductGrid products={filteredProducts} isLoading={isLoading} />
+      <ProductGrid products={filteredProducts} isLoading={productsLoading} />
     </div>
   );
 };

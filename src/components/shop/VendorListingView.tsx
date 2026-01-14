@@ -1,19 +1,16 @@
-import { EcommerceProduct } from "@/hooks/useEcommerceProducts";
+import { CooperativeVendor } from "@/hooks/useCooperativeVendors";
 import VendorCard from "./VendorCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Package } from "lucide-react";
 
 interface VendorListingViewProps {
-  products: EcommerceProduct[];
+  vendors: CooperativeVendor[];
   subcategory: string;
   category: string;
   isLoading: boolean;
 }
 
-const VendorListingView = ({ products, subcategory, category, isLoading }: VendorListingViewProps) => {
-  // Sort by price ascending (cheapest first)
-  const sortedProducts = [...products].sort((a, b) => a.price - b.price);
-
+const VendorListingView = ({ vendors, subcategory, category, isLoading }: VendorListingViewProps) => {
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -52,22 +49,22 @@ const VendorListingView = ({ products, subcategory, category, isLoading }: Vendo
         </nav>
         <h1 className="text-3xl font-bold text-primary">{subcategory} Vendors</h1>
         <p className="text-muted-foreground mt-1">
-          {sortedProducts.length} vendor{sortedProducts.length !== 1 ? "s" : ""} found, sorted from cheapest to most expensive
+          {vendors.length} cooperative{vendors.length !== 1 ? "s" : ""} found, sorted from cheapest to most expensive
         </p>
       </div>
 
       {/* Vendor Grid */}
-      {sortedProducts.length > 0 ? (
+      {vendors.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sortedProducts.map((product) => (
+          {vendors.map((vendor) => (
             <VendorCard
-              key={product.id}
-              vendorName={product.seller?.business_name || "Unknown Vendor"}
-              price={product.price}
-              unit={product.unit}
-              location={getLocationString(product.seller?.location)}
-              phone={product.seller?.phone || "Contact not available"}
-              productName={product.name}
+              key={vendor.id}
+              vendorName={vendor.cooperativeName}
+              price={vendor.productMatch?.price || 0}
+              unit={vendor.productMatch?.unit || "kg"}
+              location={getLocationString(vendor.location)}
+              phone={vendor.phone}
+              productName={vendor.productMatch?.name}
             />
           ))}
         </div>
@@ -76,7 +73,7 @@ const VendorListingView = ({ products, subcategory, category, isLoading }: Vendo
           <Package className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
           <h3 className="text-lg font-semibold mb-2">No vendors found</h3>
           <p className="text-muted-foreground">
-            There are currently no vendors selling {subcategory} in this category.
+            There are currently no cooperatives selling {subcategory} in this category.
           </p>
         </div>
       )}
