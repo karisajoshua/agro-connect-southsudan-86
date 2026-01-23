@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroConnectMarkets from "@/assets/hero-connect-markets.jpg";
 import heroAgriculturalServices from "@/assets/hero-agricultural-services.jpg";
 import heroFarmingTechniques from "@/assets/hero-farming-techniques.jpg";
@@ -9,18 +10,24 @@ import heroFarmingTechniques from "@/assets/hero-farming-techniques.jpg";
 const sliderImages = [
   {
     url: heroConnectMarkets, 
-    title: "Connect with Markets",
-    description: "Find buyers for your agricultural products and connect with markets across South Sudan."
+    title: "Connecting Farmers to Markets",
+    description: "Find buyers for your agricultural products and connect with markets across South Sudan.",
+    link: "/shop",
+    buttonText: "Explore Markets"
   },
   {
     url: heroAgriculturalServices,
-    title: "Access Agricultural Services",
-    description: "Access high-quality agricultural services and inputs for improved farming."
+    title: "Access Various Tenders",
+    description: "Discover agricultural tenders and business opportunities across the region.",
+    link: "/tenders",
+    buttonText: "View Tenders"
   },
   {
     url: heroFarmingTechniques,
-    title: "Learn Farming Techniques",
-    description: "Learn modern farming techniques to increase your productivity and income."
+    title: "Access Agro-Input Suppliers, Consultants & Transporters",
+    description: "Connect with service providers to support your agricultural business.",
+    link: "/directory",
+    buttonText: "Browse Directory"
   }
 ];
 
@@ -81,9 +88,11 @@ const HeroCarousel = () => {
             <div className="relative text-center text-white p-6 z-10">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">{slide.title}</h2>
               <p className="text-lg mb-4 max-w-2xl">{slide.description}</p>
-              <Button className="bg-agro-green text-agro-blue hover:bg-agro-green/90">
-                Learn More
-              </Button>
+              <Link to={slide.link}>
+                <Button className="bg-agro-green text-agro-blue hover:bg-agro-green/90">
+                  {slide.buttonText}
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

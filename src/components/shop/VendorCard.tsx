@@ -10,7 +10,9 @@ interface VendorCardProps {
   productName?: string;
 }
 
-const formatPrice = (price: number) => new Intl.NumberFormat("en-US").format(price);
+const formatPrice = (price: number): string => {
+  return price.toLocaleString('en-US');
+};
 
 const VendorCard = ({ vendorName, price, unit, location, phone, productName }: VendorCardProps) => {
   return (
@@ -29,8 +31,8 @@ const VendorCard = ({ vendorName, price, unit, location, phone, productName }: V
         
         {/* Price - Bold and prominent */}
         <div className="bg-primary/10 rounded-lg p-3 text-center">
-          <p className="text-2xl font-bold text-primary">
-            SSP {formatPrice(price)}
+          <p className="text-3xl font-bold text-primary">
+            {formatPrice(price)} SSP
           </p>
           <p className="text-sm text-muted-foreground">per {unit}</p>
         </div>
