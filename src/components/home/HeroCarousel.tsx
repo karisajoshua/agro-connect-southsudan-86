@@ -76,8 +76,8 @@ const HeroCarousel = () => {
       {sliderImages.map((slide, index) => (
         <div
           key={index}
-          className={`absolute inset-0 transition-opacity duration-800 ease-in-out ${
-            index === currentSlide ? 'opacity-100' : 'opacity-0'
+          className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+            index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
           }`}
         >
           <div 
