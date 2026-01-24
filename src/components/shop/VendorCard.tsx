@@ -3,18 +3,20 @@ import { MapPin, Phone, Store } from "lucide-react";
 
 interface VendorCardProps {
   vendorName: string;
-  price: number;
+  price: number | null;
+  priceLabel?: string | null;
   unit: string;
   location: string;
   phone: string;
   productName?: string;
 }
 
-const formatPrice = (price: number): string => {
-  return price.toLocaleString('en-US');
-};
+const formatPrice = (price: number): string => new Intl.NumberFormat("en-US").format(price);
 
-const VendorCard = ({ vendorName, price, unit, location, phone, productName }: VendorCardProps) => {
+const VendorCard = ({ vendorName, price, priceLabel, unit, location, phone, productName }: VendorCardProps) => {
+  const displayPrice =
+    priceLabel ? priceLabel : typeof price === "number" ? formatPrice(price) : null;
+
   return (
     <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-primary">
       <CardContent className="p-4 space-y-3">
@@ -32,7 +34,7 @@ const VendorCard = ({ vendorName, price, unit, location, phone, productName }: V
         {/* Price - Bold and prominent */}
         <div className="bg-primary/10 rounded-lg p-3 text-center">
           <p className="text-3xl font-bold text-primary">
-            {formatPrice(price)} SSP
+            {displayPrice ? `${displayPrice} SSP` : "Price on request"}
           </p>
           <p className="text-sm text-muted-foreground">per {unit}</p>
         </div>

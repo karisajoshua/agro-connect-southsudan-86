@@ -62,7 +62,8 @@ const VendorListingView = ({ vendors, subcategory, category, isLoading }: Vendor
               <VendorCard
                 key={vendor.id}
                 vendorName={vendor.cooperativeName}
-                price={vendor.productMatch?.price || 0}
+                price={vendor.productMatch?.price ?? null}
+                priceLabel={vendor.productMatch?.priceLabel ?? null}
                 unit={vendor.productMatch?.unit || "kg"}
                 location={getLocationString(vendor.location)}
                 phone={vendor.phone}

@@ -13,14 +13,27 @@ export interface CooperativeVendor {
   products: string;
   productMatch?: {
     name: string;
-    price: number;
+    price: number | null;
+    priceLabel: string | null;
     unit: string;
   };
 }
 
+// Split a products_services string by commas, but ignore commas inside parentheses
+// Example: "Rice (200,000 SSP/100kgs), Honey (20,000 SSP/litre)"
+const splitProductsServices = (productsServices: string): string[] => {
+  return productsServices
+    .split(/,(?![^()]*\))/g)
+    .map((p) => p.trim())
+    .filter(Boolean);
+};
+
 // Parse products_services field to extract product and price
 // Format examples: "Maize grains (200,000 SSP/100kgs)" or just "Maize grains"
-const parseProductWithPrice = (productStr: string, subcategory: string): { name: string; price: number; unit: string } | null => {
+const parseProductWithPrice = (
+  productStr: string,
+  subcategory: string
+): { name: string; price: number | null; priceLabel: string | null; unit: string } | null => {
   const normalizedSubcat = subcategory.toLowerCase().trim();
   const productLower = productStr.toLowerCase();
   
@@ -35,22 +48,36 @@ const parseProductWithPrice = (productStr: string, subcategory: string): { name:
   if (!isMatch) return null;
   
   // Try to extract price and unit from format like "Product (200,000 SSP/100kgs)"
-  const priceMatch = productStr.match(/\(([0-9,]+)\s*SSP\/([^)]+)\)/i);
+  // Supports:
+  // - "200,000 SSP/100kgs"
+  // - "40,000-70,000 SSP/bunch" (range)
+  const priceMatch = productStr.match(/\(([0-9,]+(?:\s*-\s*[0-9,]+)?)\s*SSP\s*\/\s*([^)]+)\)/i);
   
   if (priceMatch) {
-    const priceStr = priceMatch[1].replace(/,/g, '');
-    const price = parseInt(priceStr, 10);
+    const rawPrice = priceMatch[1].replace(/\s+/g, "");
+
+    // For sorting: take the first number if it's a range.
+    const firstNumber = rawPrice.split("-")[0] ?? "";
+    const price = Number.parseInt(firstNumber.replace(/,/g, ""), 10);
+    const safePrice = Number.isFinite(price) ? price : null;
+
     const unit = priceMatch[2].trim();
     const name = productStr.replace(/\s*\([^)]+\)/, '').trim();
     
-    return { name, price, unit };
+    return {
+      name,
+      price: safePrice,
+      priceLabel: rawPrice, // keep exactly as entered (e.g., 200,000 or 40,000-70,000)
+      unit,
+    };
   }
   
-  // No price found, return with default
+  // No price found
   return { 
     name: productStr.trim(), 
-    price: 0, 
-    unit: 'kg' 
+    price: null,
+    priceLabel: null,
+    unit: 'kg',
   };
 };
 
@@ -85,8 +112,8 @@ export const useCooperativeVendors = (subcategory?: string) => {
         const business = coop.business as any;
         if (!business?.products_services) continue;
         
-        // Split products_services by comma
-        const productsList = business.products_services.split(',').map((p: string) => p.trim());
+        // Split products_services by comma (but keep commas inside price parentheses)
+        const productsList = splitProductsServices(business.products_services);
         
         for (const productStr of productsList) {
           const productMatch = parseProductWithPrice(productStr, subcategory);
@@ -107,8 +134,8 @@ export const useCooperativeVendors = (subcategory?: string) => {
       
       // Sort by price (cheapest first), items with no price (0) go last
       vendors.sort((a, b) => {
-        const priceA = a.productMatch?.price || Infinity;
-        const priceB = b.productMatch?.price || Infinity;
+        const priceA = a.productMatch?.price ?? Infinity;
+        const priceB = b.productMatch?.price ?? Infinity;
         return priceA - priceB;
       });
       
@@ -143,7 +170,7 @@ export const useCooperativeProducts = (category?: string) => {
         const business = coop.business as any;
         if (!business?.products_services) continue;
         
-        const products = business.products_services.split(',').map((p: string) => {
+        const products = splitProductsServices(business.products_services).map((p: string) => {
           // Extract just the product name without price
           return p.replace(/\s*\([^)]+\)/, '').trim();
         });
